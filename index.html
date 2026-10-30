@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Premium Beef Matador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: hero fotográfico oscuro → cinta → líneas genéticas con foto → catálogo con vista rápida → mapa de cortes → calculadora + zonas → banda HORECA con chef → hacienda con Brahman → testimonios → CTA tomahawk → contacto. Carrito en panel lateral. */
+:root{
+  --paper:#F4ECE8;--paper-2:#EADFD9;--card:#FBF6F3;--ink:#2A1517;--ink-soft:#6B5052;--line:#D6C6BF;
+  --oxblood:#6E1F24;--oxblood-2:#8E2B31;--brass:#A87B2F;--pasture:#2F4A36;--on-ox:#F7ECE6;
+  --char:#140C0C;--char-2:#1E1313;--on-char:#F3E7E1;--on-char-soft:#C2ABA6;--gold:#D2A453;
+  --font-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --font-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --gut-l:max(16px,env(safe-area-inset-left,0px));--gut-r:max(16px,env(safe-area-inset-right,0px));
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#1B1112;--paper-2:#24171A;--card:#221618;--ink:#F1E4DE;--ink-soft:#BBA29E;--line:#3D2A2D;
+  --oxblood:#9A3239;--oxblood-2:#C4545B;--brass:#D2A453;--pasture:#7FA58A;--on-ox:#FBEFEA;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#1B1112;--paper-2:#24171A;--card:#221618;--ink:#F1E4DE;--ink-soft:#BBA29E;--line:#3D2A2D;
+  --oxblood:#9A3239;--oxblood-2:#C4545B;--brass:#D2A453;--pasture:#7FA58A;--on-ox:#FBEFEA;color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--char)}
+h1,h2,h3{font-family:var(--font-display);text-transform:uppercase;line-height:.95;letter-spacing:.01em;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+img{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:var(--gut-l);padding-right:var(--gut-r)}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Botones con presión */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid currentColor;background:transparent;padding:12px 20px;font-family:var(--font-display);font-weight:800;font-size:18px;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:pointer;border-radius:2px;transition:transform .15s var(--ease),background .2s,color .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#1A0F0F}
+.btn.gold:hover{box-shadow:0 8px 24px -8px rgba(210,164,83,.7)}
+.btn.ox{background:var(--oxblood);border-color:var(--oxblood);color:var(--on-ox)}
+.btn.sm{padding:8px 12px;font-size:15px}
+.arrow{transition:transform .2s var(--ease)}
+.btn:hover .arrow{transform:translateX(4px)}
+
+/* Header */
+header.top{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);z-index:50;color:var(--on-char);transition:background .3s,box-shadow .3s,padding .3s}
+header.top.solid{background:color-mix(in srgb,var(--char) 94%,transparent);backdrop-filter:blur(8px);box-shadow:0 1px 0 rgba(255,255,255,.06)}
+header.top .wrap{display:flex;align-items:center;gap:22px;padding-block:16px;transition:padding .3s}
+header.top.solid .wrap{padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:38px;height:38px;flex:none;transition:transform .5s var(--ease)}
+.brand:hover svg{transform:rotate(-12deg)}
+.brand b{font-family:var(--font-display);font-weight:900;font-size:22px;letter-spacing:.04em;line-height:1;display:block}
+.brand small{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;opacity:.75}
+nav.main{display:flex;gap:24px;margin-left:auto}
+nav.main a{position:relative;text-decoration:none;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:.06em;text-transform:uppercase}
+nav.main a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease)}
+nav.main a:hover::after,nav.main a.on::after{transform:scaleX(1)}
+.cart-btn{display:flex;align-items:center;gap:8px;background:var(--gold);color:#1A0F0F;border:0;border-radius:2px;padding:9px 14px;font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:transform .15s var(--ease)}
+.cart-btn:active{transform:scale(.95)}
+.cart-btn .n{background:#1A0F0F;color:var(--gold);min-width:22px;height:22px;border-radius:11px;display:grid;place-items:center;font-family:var(--font-mono);font-size:12px;padding:0 6px}
+.cart-btn.bump{animation:bump .45s var(--ease)}
+@keyframes bump{30%{transform:scale(1.15)}60%{transform:scale(.95)}}
+@media (max-width:900px){nav.main{display:none}.cart-btn{margin-left:auto}}
+
+/* Hero */
+.hero{position:relative;background:var(--char);color:var(--on-char);overflow:hidden;min-height:620px;display:flex;align-items:flex-end}
+.hero .bg{position:absolute;inset:0;background:url(img/hero.jpg) right center/cover no-repeat;animation:kb 14s var(--ease) both}
+@keyframes kb{from{transform:scale(1.08)}to{transform:scale(1)}}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--char) 18%,rgba(20,12,12,.75) 45%,rgba(20,12,12,0) 75%),linear-gradient(0deg,var(--char) 0%,rgba(20,12,12,0) 35%)}
+.hero .wrap{position:relative;z-index:1;width:100%;padding-block:140px 70px}
+.hero h1{font-size:clamp(54px,9vw,128px);font-weight:900;max-width:9.5ch}
+.hero h1 span{display:block;animation:rise .9s var(--ease) both}
+.hero h1 span:nth-child(2){color:var(--gold);animation-delay:.12s}
+.hero .lede{max-width:46ch;font-size:19px;margin-top:22px;color:var(--on-char-soft);animation:rise .9s .25s var(--ease) both}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px;animation:rise .9s .35s var(--ease) both}
+.hero .badge{position:absolute;right:var(--gut-r);bottom:70px;z-index:1;border:1px solid rgba(243,231,225,.25);background:rgba(20,12,12,.55);backdrop-filter:blur(6px);padding:14px 16px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;display:grid;gap:4px;animation:rise .9s .5s var(--ease) both}
+.hero .badge b{font-family:var(--font-display);font-size:26px;letter-spacing:.02em;color:var(--gold);line-height:1}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@media (max-width:900px){.hero{min-height:560px}.hero .badge{display:none}.hero::after{background:linear-gradient(0deg,var(--char) 30%,rgba(20,12,12,.55) 70%,rgba(20,12,12,.35))}}
+
+/* Cinta */
+.ticker{background:var(--oxblood);color:var(--on-ox);overflow:hidden;white-space:nowrap;border-block:1px solid rgba(0,0,0,.2)}
+.ticker div{display:inline-flex;gap:40px;padding-block:12px;animation:tick 40s linear infinite;font-family:var(--font-mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.ticker span::before{content:"✦";margin-right:40px;color:var(--gold)}
+.ticker:hover div{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+
+section.block{padding-block:84px}
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-bottom:30px}
+.head h2{font-size:clamp(40px,6vw,72px);font-weight:900;color:var(--oxblood-2)}
+.head p{max-width:46ch;color:var(--ink-soft)}
+
+/* Líneas */
+.lines{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.lcard{position:relative;overflow:hidden;border-radius:2px;min-height:420px;display:flex;align-items:flex-end;color:var(--on-char);text-decoration:none;isolation:isolate}
+.lcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .8s var(--ease)}
+.lcard::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(20,12,12,.92) 10%,rgba(20,12,12,.15) 60%)}
+.lcard:hover img{transform:scale(1.05)}
+.lcard .in{padding:26px;display:grid;gap:8px}
+.lcard h3{font-size:44px;font-weight:900}
+.lcard p{color:var(--on-char-soft);max-width:44ch;font-size:16px}
+.lcard .eyebrow{color:var(--gold)}
+.meter{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px}
+.meter i{display:flex;gap:3px}
+.meter s{width:16px;height:8px;background:rgba(255,255,255,.2);text-decoration:none;transform-origin:left;transition:background .3s}
+.meter s.on{background:var(--gold)}
+.lcard .go{display:inline-flex;gap:6px;font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+@media (max-width:820px){.lines{grid-template-columns:1fr}.lcard{min-height:340px}}
+
+/* Catálogo */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.search{position:relative;flex:1 1 240px;max-width:360px}
+.search input{width:100%;border:1.5px solid var(--line);background:var(--card);padding:10px 12px 10px 36px;border-radius:2px;font-size:15px;transition:border-color .2s}
+.search input:focus{border-color:var(--oxblood-2);outline:none}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-soft)}
+.chip{border:1.5px solid var(--line);background:transparent;padding:8px 14px;border-radius:999px;cursor:pointer;font-family:var(--font-mono);font-size:13px;transition:background .2s,color .2s,border-color .2s}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+.prod{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:2px;min-width:0;transition:transform .3s var(--ease),box-shadow .3s;animation:fadein .4s var(--ease) both}
+.prod:hover{transform:translateY(-4px);box-shadow:0 18px 40px -22px rgba(42,21,23,.55)}
+@keyframes fadein{from{opacity:.0;transform:translateY(8px)}}
+.prod .ph{position:relative;aspect-ratio:4/3;overflow:hidden;background:var(--char);cursor:pointer;border:0;padding:0;display:block;width:100%}
+.prod .ph img,.prod .ph canvas{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--ease)}
+.prod:hover .ph img,.prod:hover .ph canvas{transform:scale(1.07)}
+.prod .ph .qv{position:absolute;left:50%;bottom:12px;transform:translate(-50%,10px);opacity:0;background:rgba(20,12,12,.8);color:var(--on-char);font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;transition:.25s var(--ease)}
+.prod:hover .qv,.prod .ph:focus-visible .qv{opacity:1;transform:translate(-50%,0)}
+.prod .ribbon{position:absolute;top:10px;left:10px;background:var(--gold);color:#1A0F0F;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px}
+.prod .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.prod .tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--pasture)}
+.prod h3{font-size:26px;font-weight:800}
+.prod .alt{font-style:italic;font-size:14px;color:var(--ink-soft)}
+.prod .foot{margin-top:auto;padding-top:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px dashed var(--line)}
+.price b{font-family:var(--font-mono);font-size:16px;font-weight:500}
+.price small{display:block;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)}
+.add{position:relative;background:var(--oxblood);color:var(--on-ox);border:0;padding:9px 14px;font-family:var(--font-display);font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border-radius:2px;white-space:nowrap;transition:transform .15s var(--ease),background .3s;overflow:hidden}
+.add:active{transform:scale(.94)}
+.add.ok{background:var(--pasture)}
+.noresult{grid-column:1/-1;padding:30px;text-align:center;color:var(--ink-soft);border:1px dashed var(--line)}
+
+/* Mapa de cortes (infografía + zonas clicables) */
+.mapsec{background:#121212;color:var(--on-char)}
+.mapsec .head h2{color:var(--gold)}
+.mapsec .head p{color:var(--on-char-soft)}
+.mapfig{position:relative;max-width:100%;overflow-x:auto;scrollbar-width:thin}
+.mapfig .in{position:relative;min-width:560px}
+.mapfig img{width:100%;height:auto;display:block}
+.mapfig svg{position:absolute;inset:0;width:100%;height:100%}
+.hot polygon{fill:transparent;stroke:transparent;stroke-width:3;cursor:pointer;transition:fill .35s var(--ease),stroke .35s}
+.hot polygon:hover{fill:rgba(255,255,255,.14);stroke:rgba(255,255,255,.8)}
+.hot polygon:focus-visible{outline:none;stroke:var(--gold);stroke-width:5}
+.hot.dim polygon:not(.on){fill:rgba(10,8,8,.5)}
+.hot.dim polygon:not(.on):hover{fill:rgba(10,8,8,.2);stroke:rgba(255,255,255,.7)}
+.hot polygon.on{fill:rgba(210,164,83,.16);stroke:var(--gold);stroke-width:5}
+.hot .pin{fill:var(--gold);pointer-events:none}
+.hot .ring{fill:none;stroke:var(--gold);stroke-width:3;pointer-events:none;transform-box:fill-box;transform-origin:center;animation:ping 1.8s var(--ease) infinite}
+@keyframes ping{from{transform:scale(.6);opacity:1}to{transform:scale(2.4);opacity:0}}
+.zchips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 18px}
+.zchip{border:1.5px solid rgba(243,231,225,.25);background:transparent;color:var(--on-char);padding:7px 12px;border-radius:999px;cursor:pointer;font-family:var(--font-mono);font-size:12.5px;transition:background .2s,border-color .2s,color .2s}
+.zchip:hover{border-color:var(--gold)}
+.zchip[aria-pressed="true"]{background:var(--gold);color:#1A0F0F;border-color:var(--gold)}
+.mapinfo{display:grid;grid-template-columns:1.1fr 1fr;gap:28px;border-top:1px solid rgba(243,231,225,.15);padding-top:22px;animation:fadein .35s var(--ease) both}
+.mapinfo h3{font-size:48px;font-weight:900;color:var(--on-char)}
+.mapinfo .en{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.mapinfo p{color:var(--on-char-soft);margin-top:10px;max-width:52ch}
+.mapinfo ul{list-style:none;margin:8px 0 0;padding:0;columns:2;column-gap:20px;font-size:15px;color:var(--on-char-soft)}
+.mapinfo li{padding:3px 0;break-inside:avoid}
+.mapinfo li::before{content:"—";color:var(--gold);margin-right:8px}
+.mapinfo .cuts{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.cutbtn{display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(243,231,225,.3);background:rgba(255,255,255,.04);color:var(--on-char);padding:6px 12px 6px 6px;font-family:var(--font-mono);font-size:13px;cursor:pointer;border-radius:2px;transition:background .2s,border-color .2s,transform .2s var(--ease)}
+.cutbtn:hover{border-color:var(--gold);transform:translateY(-2px)}
+.cutbtn img,.cutbtn canvas{width:34px;height:34px;object-fit:cover;border-radius:2px}
+.cutbtn small{display:block;color:var(--gold);font-size:11px}
+.mapinfo .sub{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--on-char-soft)}
+@media (max-width:900px){.mapinfo{grid-template-columns:1fr}.mapinfo ul{columns:1}}
+
+/* Herramientas */
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.tool{background:var(--card);border:1px solid var(--line);padding:24px;border-radius:2px;display:flex;flex-direction:column;gap:14px}
+.tool h3{font-size:34px;font-weight:900}
+.tool label{display:grid;gap:4px;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.tool select,.tool input{border:1.5px solid var(--line);background:var(--paper);padding:10px;font-family:var(--font-body);font-size:16px;text-transform:none;letter-spacing:0;color:var(--ink);border-radius:2px;width:100%}
+.range{display:flex;align-items:center;gap:14px}
+.range input{flex:1;accent-color:var(--oxblood-2);padding:0;border:0;background:transparent}
+.range output{font-family:var(--font-display);font-weight:900;font-size:44px;min-width:2.2ch;text-align:right;color:var(--oxblood-2);line-height:1}
+.seg{display:flex;border:1.5px solid var(--ink);border-radius:2px;overflow:hidden}
+.seg button{flex:1;border:0;background:transparent;padding:9px 6px;cursor:pointer;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.sugg{border-top:1px dashed var(--line);padding-top:12px;display:grid;gap:6px;font-size:15px}
+.sugg div{display:flex;justify-content:space-between;gap:10px}
+.sugg .t{font-family:var(--font-mono);font-size:14px;border-top:1px solid var(--ink);padding-top:8px;margin-top:4px;font-weight:500}
+.zone-out{border:1.5px dashed var(--pasture);padding:16px;border-radius:2px;display:grid;gap:6px}
+.zone-out b{font-family:var(--font-display);font-size:28px;text-transform:uppercase;color:var(--pasture);line-height:1}
+.days{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.days span{width:40px;height:40px;display:grid;place-items:center;border:1.5px solid var(--line);font-family:var(--font-mono);font-size:12px;border-radius:2px;transition:background .3s,color .3s,border-color .3s}
+.days span.on{background:var(--pasture);color:#fff;border-color:var(--pasture)}
+@media (max-width:900px){.tools{grid-template-columns:1fr}}
+
+/* HORECA */
+.horeca{background:var(--char);color:var(--on-char)}
+.horeca .wrap{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center}
+.horeca .pic{position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:2px;max-width:100%}
+.horeca .pic img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.horeca .pic:hover img{transform:scale(1.04)}
+.horeca h2{font-size:clamp(40px,6vw,72px);font-weight:900}
+.horeca h2 em{font-style:normal;color:var(--gold)}
+.horeca .lede{color:var(--on-char-soft);margin-top:14px;max-width:52ch}
+.perks{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;margin:26px 0}
+.perks div{border-top:1px solid rgba(243,231,225,.2);padding-top:10px}
+.perks b{font-family:var(--font-display);font-size:22px;text-transform:uppercase;display:block;line-height:1.05;color:var(--gold)}
+.perks span{font-size:15px;color:var(--on-char-soft)}
+@media (max-width:900px){.horeca .wrap{grid-template-columns:1fr}.perks{grid-template-columns:1fr}}
+
+/* Hacienda */
+.ranch{position:relative;color:#F2EFE6;overflow:hidden;isolation:isolate}
+.ranch>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.ranch::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(24,38,28,.94) 30%,rgba(24,38,28,.55) 60%,rgba(24,38,28,.1))}
+.ranch .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;padding-block:96px}
+.ranch h2{font-size:clamp(40px,6vw,72px);font-weight:900}
+.ranch p{max-width:52ch;margin-top:14px;color:#DCE3DA}
+.ranch .eyebrow{color:#E5C27A}
+.steps{display:grid;gap:0;margin-top:26px;border-left:2px solid #E5C27A;padding-left:20px}
+.steps div{padding:10px 0;position:relative}
+.steps div::before{content:"";position:absolute;left:-27px;top:16px;width:12px;height:12px;border-radius:50%;background:#E5C27A;box-shadow:0 0 0 4px rgba(229,194,122,.25)}
+.steps b{font-family:var(--font-display);font-size:24px;text-transform:uppercase;display:block;line-height:1}
+.steps span{font-size:15px;color:#DCE3DA}
+@media (max-width:900px){.ranch .wrap{grid-template-columns:1fr}.ranch::before{background:rgba(24,38,28,.86)}}
+
+/* Testimonios */
+.carousel{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 40px)/3);gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding-bottom:4px}
+.carousel::-webkit-scrollbar{display:none}
+.q{scroll-snap-align:start;border-top:3px solid var(--oxblood-2);padding-top:16px;display:flex;flex-direction:column;gap:14px;margin:0}
+.q p{font-size:19px;line-height:1.5}
+.q p::before{content:"“";font-family:var(--font-display);font-size:60px;line-height:.3;color:var(--oxblood-2);display:block;height:24px}
+.q cite{font-style:normal;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:auto}
+.cnav{display:flex;gap:8px}
+.cnav button{width:44px;height:44px;border:1.5px solid var(--ink);background:transparent;cursor:pointer;font-size:18px;border-radius:2px;transition:background .2s,color .2s}
+.cnav button:hover{background:var(--ink);color:var(--paper)}
+@media (max-width:900px){.carousel{grid-auto-columns:85%}}
+
+/* CTA */
+.cta-band{position:relative;overflow:hidden;color:var(--on-char);isolation:isolate}
+.cta-band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;z-index:-2}
+.cta-band::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--char) 25%,rgba(20,12,12,.3) 70%)}
+.cta-band .wrap{padding-block:100px}
+.cta-band h2{font-size:clamp(40px,6vw,76px);font-weight:900;max-width:12ch}
+.cta-band p{color:var(--on-char-soft);margin:14px 0 26px;max-width:40ch}
+
+/* Contacto */
+.contact{background:var(--paper-2)}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.cgrid div{border-top:1px solid var(--ink);padding-top:10px;display:grid;gap:6px;align-content:start}
+.cgrid b{font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.cgrid span{font-size:17px;overflow-wrap:anywhere}
+.copy{justify-self:start;border:0;background:transparent;padding:0;font-family:var(--font-mono);font-size:12px;color:var(--oxblood-2);text-decoration:underline;cursor:pointer}
+@media (max-width:820px){.cgrid{grid-template-columns:1fr 1fr}}
+footer{background:var(--char);color:var(--on-char-soft)}
+footer .wrap{padding-block:28px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px}
+footer .partners{font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+
+/* Panel lateral: carrito */
+.scrim{position:fixed;inset:0;background:rgba(20,12,12,.55);z-index:70;opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);z-index:71;background:var(--card);color:var(--ink);transform:translateX(102%);transition:transform .4s var(--ease);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px);box-shadow:-20px 0 60px -30px rgba(0,0,0,.6)}
+.drawer.open{transform:none}
+.drawer header{padding:18px 20px;border-bottom:2px solid var(--ink);display:flex;justify-content:space-between;align-items:center}
+.drawer header h3{font-size:30px;font-weight:900}
+.x{border:0;background:transparent;font-size:28px;line-height:1;cursor:pointer;width:40px;height:40px;transition:transform .2s}
+.x:hover{transform:rotate(90deg)}
+.dbody{flex:1;overflow:auto;padding:4px 20px}
+.qi{display:grid;grid-template-columns:56px 1fr auto;gap:6px 12px;padding:14px 0;border-bottom:1px dashed var(--line);align-items:center;animation:fadein .3s var(--ease) both}
+.qi .th{width:56px;height:56px;object-fit:cover;border-radius:2px;background:var(--char);grid-row:span 2}
+.qi .th canvas{width:56px;height:56px}
+.qi .nm{font-weight:600;font-size:15px;line-height:1.3;min-width:0}
+.qi .nm small{display:block;font-weight:400;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft)}
+.qi .sub{font-family:var(--font-mono);font-size:14px;text-align:right}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);width:max-content}
+.stepper button{width:30px;height:30px;border:0;background:transparent;cursor:pointer;font-size:18px;transition:background .15s}
+.stepper button:hover{background:var(--paper-2)}
+.stepper span{min-width:64px;text-align:center;font-family:var(--font-mono);font-size:13px}
+.rm{border:0;background:transparent;color:var(--ink-soft);text-decoration:underline;font-size:12px;cursor:pointer;justify-self:end}
+.empty{padding:40px 0;color:var(--ink-soft);text-align:center;display:grid;gap:12px;justify-items:center}
+.dfoot{border-top:2px solid var(--ink);padding:14px 20px 18px;display:grid;gap:10px;max-height:62vh;overflow:auto}
+.dfoot label{display:grid;gap:4px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.dfoot input,.dfoot select,.dfoot textarea{border:1px solid var(--line);background:var(--paper);padding:9px 10px;font-family:var(--font-body);font-size:15px;text-transform:none;letter-spacing:0;color:var(--ink);border-radius:2px;width:100%}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.totals{display:grid;gap:4px;font-family:var(--font-mono);font-size:13px}
+.totals div{display:flex;justify-content:space-between}
+.totals .big{font-size:19px;font-weight:500;border-top:1px solid var(--ink);padding-top:8px;margin-top:4px}
+.err{color:var(--oxblood-2);font-size:13px}
+.note{font-size:12px;color:var(--ink-soft)}
+.result pre{white-space:pre-wrap;font-family:var(--font-mono);font-size:12px;background:var(--paper);border:1px solid var(--line);padding:12px;margin:0;max-height:240px;overflow:auto}
+
+/* Vista rápida */
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px var(--gut-r) 20px var(--gut-l);pointer-events:none}
+.modal .card{pointer-events:auto;background:var(--card);width:min(880px,100%);max-height:90vh;overflow:auto;display:grid;grid-template-columns:1fr 1fr;border-radius:2px;transform:translateY(20px) scale(.98);opacity:0;transition:.3s var(--ease);box-shadow:0 40px 80px -40px rgba(0,0,0,.7)}
+.modal.open .card{transform:none;opacity:1}
+.modal .ph{background:var(--char);min-height:320px;position:relative}
+.modal .ph img,.modal .ph canvas{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.modal .info{padding:26px;display:flex;flex-direction:column;gap:12px;position:relative}
+.modal .info .x{position:absolute;top:10px;right:10px}
+.modal h3{font-size:46px;font-weight:900;padding-right:40px}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:15px}
+.facts dt{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);padding-top:3px}
+.facts dd{margin:0}
+.pres{display:flex;gap:8px;flex-wrap:wrap}
+.pres button{border:1.5px solid var(--line);background:transparent;padding:8px 12px;cursor:pointer;font-family:var(--font-mono);font-size:13px;border-radius:2px;transition:border-color .2s,background .2s}
+.pres button[aria-pressed="true"]{border-color:var(--oxblood-2);background:color-mix(in srgb,var(--oxblood-2) 12%,transparent)}
+.mrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line)}
+.mrow .tot{font-family:var(--font-mono);font-size:20px;margin-left:auto}
+.ometer{display:flex;gap:3px}
+.ometer s{width:18px;height:8px;background:var(--line);text-decoration:none}
+.ometer s.on{background:var(--brass)}
+@media (max-width:760px){.modal .card{grid-template-columns:1fr}.modal .ph{min-height:220px}}
+
+/* Vuelo al carrito y toast */
+.fly{position:fixed;z-index:90;width:44px;height:44px;border-radius:50%;background-size:cover;background-position:center;border:2px solid var(--gold);pointer-events:none;transition:transform .7s cubic-bezier(.5,-0.3,.6,1),opacity .7s}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--char);color:var(--on-char);padding:12px 18px;font-family:var(--font-mono);font-size:13px;border-radius:2px;z-index:95;transition:.3s var(--ease);pointer-events:none;border-left:3px solid var(--gold)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.mbar{display:none}
+@media (max-width:900px){
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--char);color:var(--on-char);padding:10px var(--gut-r) calc(10px + env(safe-area-inset-bottom,0px)) var(--gut-l);justify-content:space-between;align-items:center;gap:12px;transform:translateY(100%);transition:transform .3s var(--ease)}
+  .mbar.show{transform:none}
+  .mbar .btn{padding:8px 14px;font-size:15px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#inicio" aria-label="Premium Beef Matador, inicio">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 28V13l9 9 9-9v15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="square"/></svg>
+      <span><b>PREMIUM BEEF</b><small>HACIENDA EL MATADOR</small></span>
+    </a>
+    <nav class="main" aria-label="Principal">
+      <a href="#cortes">Cortes</a><a href="#mapa">Mapa de cortes</a><a href="#restaurantes">Restaurantes</a><a href="#hacienda">Hacienda</a><a href="#contacto">Contacto</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" type="button" aria-label="Abrir cotización">Cotización <span class="n" id="count">0</span></button>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="hero">
+    <div class="bg" role="img" aria-label="Ribeye F1 Wagyu × Brahman crudo sobre tabla de madera, con marmoleo visible"></div>
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">De la finca directo a tu mesa · Medellín</p>
+      <h1><span>Marmoleo</span><span>de hierro propio</span></h1>
+      <p class="lede">Criamos Brahman puro y lo cruzamos con Wagyu japonés en nuestra hacienda. Casi 17 años de ganadería familiar, certificada por ASOCEBU, en cada corte que llega a tu mesa.</p>
+      <div class="cta">
+        <a class="btn gold" href="#cortes">Ver cortes <span class="arrow">→</span></a>
+        <a class="btn" href="#restaurantes" style="color:var(--on-char)">Soy restaurante</a>
+      </div>
+    </div>
+    <div class="badge"><span>ASOCEBU · FINCAS ÉLITE</span><b>Posición #11</b><span>Valles Interandinos · Tipo A</span></div>
+  </section>
+
+  <div class="ticker" aria-hidden="true"><div id="tick"></div></div>
+
+  <section class="block" id="lineas">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Dos líneas, un mismo origen</p><h2>Nuestra genética</h2></div>
+        <p>Toda la carne sale de nuestro propio hato. Elige entre el cruce F1 con marmoleo de Wagyu o la carne magra del Brahman puro.</p></div>
+      <div class="lines">
+        <a class="lcard" href="#cortes" data-line="wagyu">
+          <img src="img/ribeye.jpg" alt="Ribeye F1 crudo con vetas de grasa intramuscular sobre piedra oscura" loading="lazy">
+          <div class="in"><p class="eyebrow">Línea premium</p><h3>F1 Wagyu × Brahman</h3>
+            <p>Vacas Brahman cruzadas con toros Wagyu puros. Grasa intramuscular fina que se funde en la cocción.</p>
+            <div class="meter">MARMOLEO <i><s class="on"></s><s class="on"></s><s class="on"></s><s class="on"></s><s></s></i></div>
+            <span class="go">Ver cortes F1 <span class="arrow">→</span></span></div>
+        </a>
+        <a class="lcard" href="#cortes" data-line="brahman">
+          <img src="img/brahman.jpg" alt="Toro Brahman en potrero verde con el hato pastando al fondo" loading="lazy" style="object-position:70% center">
+          <div class="in"><p class="eyebrow">Línea tradicional</p><h3>Brahman 100%</h3>
+            <p>Ganado cebuino puro criado en pastoreo. Carne magra y de sabor limpio para el día a día y la parrilla.</p>
+            <div class="meter">MARMOLEO <i><s class="on"></s><s class="on"></s><s></s><s></s><s></s></i></div>
+            <span class="go">Ver cortes Brahman <span class="arrow">→</span></span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="cortes" style="padding-top:0">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Surtido de carnes</p><h2>Elige tus cortes</h2></div>
+        <p>Toca un corte para ver su ficha, elegir porción y agregarlo. Cuando termines, envías la cotización por WhatsApp.</p></div>
+      <div class="toolbar">
+        <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <label class="sr" for="q">Buscar corte</label><input id="q" type="search" placeholder="Buscar: ribeye, lomo, parrilla…" autocomplete="off"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap" role="group" aria-label="Filtrar">
+          <button class="chip" type="button" data-f="all" aria-pressed="true">Todos</button>
+          <button class="chip" type="button" data-f="wagyu" aria-pressed="false">F1 Wagyu × Brahman</button>
+          <button class="chip" type="button" data-f="brahman" aria-pressed="false">Brahman 100%</button>
+          <button class="chip" type="button" data-f="parrilla" aria-pressed="false">Para parrilla</button>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="note" style="margin-top:14px">Catálogo y precios de ejemplo para el prototipo.</p>
+    </div>
+  </section>
+
+  <section class="block mapsec" id="mapa">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow" style="color:var(--on-char-soft)">Guía del carnicero</p><h2>Mapa de cortes</h2></div>
+        <p>Misma ubicación anatómica, dos genéticas. Toca una zona del animal para ver sus cortes y cuáles te llevamos a la mesa.</p></div>
+      <div class="mapfig"><div class="in">
+        <img src="img/cortes.jpg" alt="Infografía Premium Beef Matador: toro Brahman con las zonas de corte marcadas por color — paleta, costillar, lomo corto, solomo, pierna, pecho, falda delantera, sobrebarriga y morcillo" width="1672" height="941">
+        <svg viewBox="0 0 1672 941" class="hot" id="hot" role="group" aria-label="Zonas de corte"></svg>
+      </div></div>
+      <div class="zchips" id="zchips" role="group" aria-label="Elegir zona"></div>
+      <div class="mapinfo" id="mapinfo" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="block" id="herramientas">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Planea tu compra</p><h2>¿Cuánta carne necesito?</h2></div></div>
+      <div class="tools">
+        <div class="tool">
+          <h3>Calculadora de asado</h3>
+          <label for="pp">Personas</label>
+          <div class="range"><input id="pp" type="range" min="2" max="60" value="10"><output id="ppo" for="pp">10</output></div>
+          <span class="eyebrow" style="color:var(--ink-soft)">Tipo de plan</span>
+          <div class="seg" role="group" aria-label="Tipo de plan">
+            <button type="button" data-plan="asado" aria-pressed="true">Asado</button>
+            <button type="button" data-plan="premium" aria-pressed="false">Degustación F1</button>
+            <button type="button" data-plan="almuerzo" aria-pressed="false">Almuerzo</button>
+          </div>
+          <div class="sugg" id="sugg"></div>
+          <button class="btn ox" type="button" id="addSugg">Agregar a mi cotización</button>
+        </div>
+        <div class="tool">
+          <h3>¿Llegamos a tu zona?</h3>
+          <label for="zone">Barrio o municipio</label>
+          <select id="zone"></select>
+          <div class="zone-out" id="zoneOut" aria-live="polite"></div>
+          <p class="note">Despachamos en furgón refrigerado entre 0 y 4 °C, con los cortes empacados al vacío y etiquetados por lote.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block horeca" id="restaurantes">
+    <div class="wrap">
+      <div class="pic"><img src="img/chef.jpg" alt="Chef emplatando un corte de res sellado con flores comestibles y salsas" loading="lazy"></div>
+      <div>
+        <p class="eyebrow" style="color:var(--gold)">Canal HORECA</p>
+        <h2>Para tu <em>cocina profesional</em></h2>
+        <p class="lede">Restaurantes, hoteles y asaderos de Medellín ya trabajan con nuestros cortes. Te damos una cuenta con condiciones de cliente frecuente.</p>
+        <div class="perks">
+          <div><b>Pedido recurrente</b><span>Programa tu pedido fijo semanal y llega solo, en tu ruta.</span></div>
+          <div><b>Ruta y horario fijo</b><span>Entrega antes del servicio, al responsable de recibo.</span></div>
+          <div><b>Crédito 15 a 30 días</b><span>Facturación electrónica y estado de cuenta en línea.</span></div>
+          <div><b>Ficha por lote</b><span>Animal, planta de beneficio y días de maduración de cada corte.</span></div>
+        </div>
+        <form id="horecaForm" class="tool" style="background:var(--char-2);border-color:rgba(243,231,225,.15);color:var(--on-char);padding:20px" novalidate>
+          <div class="row2">
+            <label for="hn" style="color:var(--on-char-soft)">Restaurante<input id="hn" placeholder="Nombre del negocio"></label>
+            <label for="ht" style="color:var(--on-char-soft)">Celular<input id="ht" inputmode="tel" placeholder="300 000 0000"></label>
+          </div>
+          <div class="row2">
+            <label for="hv" style="color:var(--on-char-soft)">Volumen semanal<select id="hv"><option>Menos de 10 kg</option><option selected>10 a 30 kg</option><option>30 a 80 kg</option><option>Más de 80 kg</option></select></label>
+            <label for="hz" style="color:var(--on-char-soft)">Zona<select id="hz"></select></label>
+          </div>
+          <p class="err" id="herr" hidden></p>
+          <button class="btn gold" type="submit">Solicitar cuenta HORECA <span class="arrow">→</span></button>
+          <div id="hres" hidden></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="ranch" id="hacienda">
+    <img src="img/brahman.jpg" alt="" loading="lazy">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">Acerca de nosotros</p>
+        <h2>Ganadería de tradición</h2>
+        <p>Hace casi 17 años iniciamos nuestra ganadería en unión familiar. Conocemos la tradición ganadera desde nuestros padres y abuelos, amantes del agro y de la cría de ganado Brahman.</p>
+        <p>Trabajamos con un círculo de aliados por una ganadería sostenible y mejoramos continuamente nuestro ganado de raza pura.</p>
+        <div class="steps">
+          <div><b>Cría</b><span>Hato Brahman puro registrado, en pastoreo.</span></div>
+          <div><b>Cruce F1</b><span>Genética Wagyu pura sobre vacas Brahman.</span></div>
+          <div><b>Reconocimiento</b><span>Criador élite Tipo A · #11 Fincas Élite ASOCEBU.</span></div>
+          <div><b>Corte y despacho</b><span>Maduración, empaque al vacío y cadena de frío.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="clientes">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Testimonios</p><h2>¿Por qué nos eligen?</h2></div>
+        <div class="cnav"><button type="button" id="prev" aria-label="Anterior">←</button><button type="button" id="next" aria-label="Siguiente">→</button></div></div>
+      <div class="carousel" id="car">
+        <figure class="q"><p>Sus cortes están a la altura de los que encuentras en restaurantes de talla mundial.</p><cite>Cedric Saborit · Oh La La Bistrot</cite></figure>
+        <figure class="q"><p>Manejan incluso la famosa wagyu. La maduración y sus finos cortes los convierten en una de las mejores carnicerías del país.</p><cite>FiveStar Burger &amp; Hots</cite></figure>
+        <figure class="q"><p>Son de las mejores carnes que podemos conseguir en Medellín. Desde la primera compra somos clientes permanentes.</p><cite>La Tienda del Bife</cite></figure>
+        <figure class="q"><p>Ganadería tradicional aplicada a sus ganados: por eso destacan sobre las demás ofertas de Medellín.</p><cite>Óscar Pérez</cite></figure>
+        <figure class="q"><p>Los productos son de gran factura. Es como un amor a primera vista.</p><cite>Johana María Vargas</cite></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <img src="img/tomahawk.jpg" alt="Tomahawk a la parrilla tajado sobre plato negro con romero" loading="lazy">
+    <div class="wrap">
+      <p class="eyebrow" style="color:var(--gold)">Edición de parrilla</p>
+      <h2>Tu próximo asado empieza aquí</h2>
+      <p>Tomahawk F1 de 1,2 a 1,6 kg, madurado 21 días. Para compartir en la mesa.</p>
+      <button class="btn gold" type="button" data-open="w-tomahawk">Ver el Tomahawk <span class="arrow">→</span></button>
+    </div>
+  </section>
+
+  <section class="block contact" id="contacto">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Sigamos conectados</p><h2>Contacto</h2></div></div>
+      <div class="cgrid">
+        <div><b>Ubicación</b><span>Medellín, Colombia</span></div>
+        <div><b>Teléfono / WhatsApp</b><span>+57 321 644 8022</span><button class="copy" type="button" data-copy="+57 321 644 8022">Copiar número</button></div>
+        <div><b>Correo</b><span>compras@premiumbeefmatador.com</span><button class="copy" type="button" data-copy="compras@premiumbeefmatador.com">Copiar correo</button></div>
+        <div><b>Horario</b><span>Lunes a sábado<br>7:00 a. m. – 5:00 p. m.</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>© Premium Beef · Hacienda El Matador</span><span class="partners">ASOCEBU · INVIMA · Cámara de Comercio de Medellín</span></div></footer>
+
+<div class="mbar" id="mbar"><span class="mono" id="mtotal"></span><button class="btn gold" type="button" id="mopen">Ver cotización</button></div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Tu cotización" aria-hidden="true">
+  <header><div><p class="eyebrow">Cotización <span id="qno"></span></p><h3>Tu pedido</h3></div><button class="x" type="button" id="dclose" aria-label="Cerrar">×</button></header>
+  <div class="dbody" id="items"></div>
+  <div class="dfoot" id="dfoot">
+    <div class="totals" id="totals"></div>
+    <form id="qform" novalidate style="display:grid;gap:10px">
+      <div class="row2">
+        <label for="tipo">Cliente<select id="tipo"><option value="hogar">Hogar</option><option value="restaurante">Restaurante</option><option value="evento">Evento</option></select></label>
+        <label for="dzone">Entrega<select id="dzone"></select></label>
+      </div>
+      <div class="row2">
+        <label for="nombre">Nombre<input id="nombre" autocomplete="name" placeholder="Tu nombre"></label>
+        <label for="tel">Celular<input id="tel" inputmode="tel" autocomplete="tel" placeholder="300 000 0000"></label>
+      </div>
+      <label for="notas">Notas<textarea id="notas" rows="2" placeholder="Grosor, fecha, término…"></textarea></label>
+      <p class="err" id="err" hidden></p>
+      <button class="btn ox" type="submit">Generar cotización</button>
+    </form>
+    <div class="result" id="result" hidden style="display:grid;gap:10px">
+      <pre id="rtext"></pre>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn gold sm" id="wa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+        <button class="btn sm" type="button" id="copyQ">Copiar</button>
+        <button class="btn sm" type="button" id="editQ">Editar</button>
+      </div>
+      <p class="note">Si WhatsApp no abre, copia el texto y envíalo al +57 321 644 8022.</p>
+    </div>
+  </div>
+</aside>
+
+<div class="modal" id="modal" aria-hidden="true"><div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle" id="mcard"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const WA="573216448022";
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const fmt=n=>"$"+Math.round(n).toLocaleString("es-CO");
+const KG=[{l:"Porción 300 g",kg:.3,step:1},{l:"Porción 500 g",kg:.5,step:1},{l:"Por kilo",kg:1,step:.5}];
+const PK=[{l:"Paquete 4×150 g",kg:1,step:1}];
+const P=[
+ {id:"w-ribeye",line:"wagyu",name:"Ribeye",alt:"Ojo de bife",desc:"Centro del costillar, el corte con más marmoleo de la línea F1.",price:185000,unit:"kg",parr:1,m:1,img:"img/ribeye.jpg",cook:"Parrilla o sartén de hierro, término medio",aging:21,region:"rib",top:"Más pedido"},
+ {id:"w-strip",line:"wagyu",name:"Striploin",alt:"Bife de chorizo",desc:"Tapa de grasa lateral, textura firme y jugosa.",price:165000,unit:"kg",parr:1,m:.85,img:"img/striploin.jpg",cook:"Parrilla alta, sellar y reposar 5 minutos",aging:21,img:"img/p-striploin.jpg",region:"shortloin"},
+ {id:"w-picana",line:"wagyu",name:"Picaña",alt:"Colita de cadera",desc:"Con su capa de grasa intacta, para asar entera o en mariposa.",price:120000,unit:"kg",parr:1,m:.7,img:"img/picana.jpg",cook:"Brasa media, grasa hacia el fuego primero",aging:14,img:"img/p-picana.jpg",region:"sirloin"},
+ {id:"w-tomahawk",line:"wagyu",name:"Tomahawk",alt:"Ribeye con hueso largo",desc:"Pieza de 1,2 a 1,6 kg para compartir en la mesa.",price:175000,unit:"kg",parr:1,m:.95,img:"img/tomahawk.jpg",cook:"Fuego indirecto y sellado final",aging:21,img:"img/p-tomahawk.jpg",region:"rib",top:"Para compartir",whole:1},
+ {id:"w-denver",line:"wagyu",name:"Denver",alt:"Corte de la paleta",desc:"Marmoleo alto a mejor precio. Ideal a la plancha.",price:98000,unit:"kg",parr:1,m:.75,cook:"Plancha caliente, corte contra la fibra",aging:14,img:"img/p-denver.jpg",region:"chuck"},
+ {id:"w-burger",line:"wagyu",name:"Hamburguesa F1",alt:"4 unidades × 150 g",desc:"Molida 80/20 de cortes F1, lista para la parrilla.",price:48000,unit:"paquete",parr:1,m:.6,cook:"Parrilla, 3 minutos por lado",aging:0,img:"img/p-burger.jpg",region:"brisket"},
+ {id:"b-lomo",line:"brahman",name:"Lomo fino",alt:"Solomillo",desc:"El corte más tierno de la res, magro y suave.",price:78000,unit:"kg",parr:1,m:.25,cook:"Sellado rápido y horno, término medio",aging:14,img:"img/p-lomo.jpg",region:"shortloin"},
+ {id:"b-punta",line:"brahman",name:"Punta de anca",alt:"Picaña Brahman",desc:"El clásico de la parrilla antioqueña.",price:62000,unit:"kg",parr:1,m:.3,cook:"Brasa media con su gordo",aging:14,img:"img/p-punta.jpg",region:"sirloin",top:"Clásico"},
+ {id:"b-churrasco",line:"brahman",name:"Churrasco",alt:"Lomo ancho",desc:"Porciones gruesas, sabor intenso.",price:58000,unit:"kg",parr:1,m:.3,cook:"Parrilla alta, sal gruesa al final",aging:14,img:"img/p-churrasco.jpg",region:"shortloin"},
+ {id:"b-costilla",line:"brahman",name:"Costilla",alt:"Corte San Luis",desc:"Para horno lento o ahumado.",price:34000,unit:"kg",parr:0,m:.35,cook:"Horno lento 3 horas a 140 °C",aging:7,img:"img/p-costilla.jpg",region:"plate"},
+ {id:"b-sobre",line:"brahman",name:"Sobrebarriga",alt:"Falda",desc:"Para sudar, hornear o deshilachar.",price:36000,unit:"kg",parr:0,m:.2,cook:"Sudada o al horno, 2 horas",aging:7,img:"img/p-sobre.jpg",region:"flank"},
+ {id:"b-molida",line:"brahman",name:"Carne molida",img:"img/p-molida.jpg",alt:"Magra 90/10",desc:"Molida del día, empacada al vacío por libra.",price:28000,unit:"kg",parr:0,m:.15,cook:"Para salsas, rellenos y albóndigas",aging:0,region:"round"}
+];
+const PX=Object.fromEntries(P.map(p=>[p.id,p]));
+const LINE={wagyu:"F1 Wagyu × Brahman",brahman:"Brahman 100%"};
+const presOf=p=>p.unit==="kg"?(p.whole?[{l:"Pieza 1,4 kg aprox.",kg:1.4,step:1},KG[2]]:KG):PK;
+
+/* Zonas y rutas (coinciden con el portal admin) */
+const ROUTES={R1:{n:"Sur",d:[2,4],fee:12000},R2:{n:"Poblado",d:[1,3,5],fee:12000},R3:{n:"Occidente",d:[2,5],fee:12000},R4:{n:"Norte",d:[3],fee:18000},R5:{n:"Oriente",d:[6],fee:35000},NX:{n:"Nacional",d:[],fee:60000},PK:{n:"Recoge",d:[1,2,3,4,5,6],fee:0}};
+const ZONES=[["El Poblado","R2"],["Las Palmas","R2"],["Laureles","R3"],["Estadio","R3"],["Belén","R3"],["Envigado","R1"],["Sabaneta","R1"],["Itagüí","R1"],["La Estrella","R1"],["Bello","R4"],["Copacabana","R4"],["Rionegro","R5"],["Llanogrande","R5"],["Otra ciudad de Colombia","NX"],["Recojo en punto","PK"]];
+const DN=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const zoneOpts=ZONES.map(([z],i)=>`<option value="${i}">${z}</option>`).join("");
+function nextDay(days){const d=new Date();d.setHours(0,0,0,0);const lim=new Date().getHours()>=14?2:1;for(let i=lim;i<=9;i++){const t=new Date(d.getTime()+i*864e5);if(days.includes(t.getDay()))return t}return null}
+
+/* Marmoleo procedural para cortes sin foto */
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return((s>>>0)%10000)/10000}}
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function marble(cv,density,seed){
+  const ctx=cv.getContext("2d"),w=cv.width,h=cv.height,r=rng(seed);
+  const g=ctx.createRadialGradient(w*.45,h*.45,10,w/2,h/2,w*.75);g.addColorStop(0,"#A6383C");g.addColorStop(1,"#5E1A1E");
+  ctx.fillStyle="#140C0C";ctx.fillRect(0,0,w,h);
+  ctx.save();ctx.beginPath();ctx.ellipse(w/2,h/2,w*.42,h*.38,-.1,0,7);ctx.clip();ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.globalAlpha=.08;ctx.strokeStyle="#2A0A0C";for(let i=0;i<w;i+=3){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+h*.25,h);ctx.stroke()}ctx.globalAlpha=1;
+  const veins=Math.round(10+density*60);
+  for(let v=0;v<veins;v++){let x=r()*w,y=r()*h,a=r()*7;const len=20+r()*(50+density*120),lw=.6+r()*(1+density*3.5);
+    ctx.strokeStyle=`rgba(246,232,222,${.5+r()*.45})`;ctx.lineWidth=lw;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,y);
+    for(let s=0;s<len;s+=4){a+=(r()-.5)*.9;x+=Math.cos(a)*4;y+=Math.sin(a)*4;ctx.lineTo(x,y)}ctx.stroke()}
+  ctx.restore();ctx.strokeStyle="rgba(245,230,214,.9)";ctx.lineWidth=8+density*10;ctx.beginPath();ctx.ellipse(w/2,h/2,w*.42,h*.38,-.1,.2,2.4);ctx.stroke();
+}
+function media(p,w=460,h=345){
+  if(p.img)return `<img src="${p.img}" alt="${p.name} ${LINE[p.line]}" loading="lazy">`;
+  return `<canvas width="${w}" height="${h}" data-m="${p.m}" data-s="${hash(p.id)}" aria-hidden="true"></canvas>`;
+}
+function paint(root){(root||document).querySelectorAll("canvas[data-m]").forEach(c=>{if(!c.dataset.p){marble(c,+c.dataset.m,+c.dataset.s);c.dataset.p=1}})}
+
+/* Cinta */
+const TK=["Maduración en frío hasta 21 días","Empacado al vacío","Cadena de frío 0–4 °C","Certificados por ASOCEBU","Trazabilidad por lote","100% producto colombiano","Entregas en el Valle de Aburrá y Oriente"];
+$("#tick").innerHTML=[...TK,...TK].map(t=>`<span>${t}</span>`).join("");
+
+/* Header y nav activa */
+const top=$("#top");
+const onScroll=()=>{top.classList.toggle("solid",scrollY>40);$("#mbar").classList.toggle("show",scrollY>500&&count()>0)};
+addEventListener("scroll",onScroll,{passive:true});
+const navs=$$("nav.main a");
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)navs.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id))}),{rootMargin:"-45% 0px -50% 0px"});
+  ["cortes","mapa","restaurantes","hacienda","contacto"].forEach(id=>io.observe(document.getElementById(id)))}
+
+/* Estado del carrito */
+let cart={};
+try{cart=JSON.parse(localStorage.getItem("pbm-cart-v2")||"{}")||{}}catch(e){cart={}}
+const save=()=>{try{localStorage.setItem("pbm-cart-v2",JSON.stringify(cart))}catch(e){}};
+const key=(pid,pi)=>pid+"|"+pi;
+const count=()=>Object.keys(cart).length;
+const qno="PBM-"+String(new Date().getFullYear()).slice(2)+String(Math.floor(1000+Math.random()*9000));
+$("#qno").textContent=qno;
+function addToCart(pid,pi,q){const k=key(pid,pi);cart[k]=Math.round(((cart[k]||0)+q)*10)/10;save();renderCart();bump()}
+const lineTotal=(pid,pi,q)=>PX[pid].price*presOf(PX[pid])[pi].kg*q;
+const qtyTxt=(pid,pi,q)=>{const pr=presOf(PX[pid])[pi];return pr.step<1?q.toLocaleString("es-CO")+" kg":q+" ud"};
+
+/* Catálogo */
+let filter="all",term="";
+const norm=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function renderGrid(){
+  const t=norm(term);
+  const list=P.filter(p=>(filter==="all"||p.line===filter||(filter==="parrilla"&&p.parr))&&(!t||norm(p.name+" "+p.alt+" "+p.desc+" "+p.cook+" "+LINE[p.line]).includes(t)));
+  $("#grid").innerHTML=list.map((p,i)=>`<article class="prod" style="animation-delay:${i*40}ms">
+    <button class="ph" type="button" data-open="${p.id}" aria-label="Ver ficha de ${p.name}">${media(p)}${p.top?`<span class="ribbon">${p.top}</span>`:""}<span class="qv">Ver ficha</span></button>
+    <div class="body"><span class="tag">${LINE[p.line]}</span><h3>${p.name}</h3><span class="alt">${p.alt}</span>
+    <div class="foot"><span class="price"><b>${fmt(p.price)}</b><small>por ${p.unit}</small></span>
+    <button class="add" type="button" data-quick="${p.id}">Agregar</button></div></div></article>`).join("")||
+    `<p class="noresult">No encontramos “${term.replace(/[<>&]/g,"")}”. Prueba con otro corte o escríbenos por WhatsApp.</p>`;
+  paint($("#grid"));
+}
+$("#q").addEventListener("input",e=>{term=e.target.value;renderGrid()});
+$$(".chip").forEach(c=>c.addEventListener("click",()=>{filter=c.dataset.f;$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x===c));renderGrid()}));
+$$(".lcard").forEach(a=>a.addEventListener("click",()=>{filter=a.dataset.line;$$(".chip").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f===filter));renderGrid()}));
+
+/* Vuelo al carrito */
+function fly(from,img){
+  if(RM)return;const r=from.getBoundingClientRect(),c=$("#cartBtn").getBoundingClientRect();
+  const d=document.createElement("div");d.className="fly";
+  if(img)d.style.backgroundImage=`url(${img})`;else d.style.background="var(--oxblood-2)";
+  d.style.left=(r.left+r.width/2-22)+"px";d.style.top=(r.top+r.height/2-22)+"px";document.body.appendChild(d);
+  requestAnimationFrame(()=>{d.style.transform=`translate(${c.left+c.width/2-(r.left+r.width/2)}px,${c.top+c.height/2-(r.top+r.height/2)}px) scale(.3)`;d.style.opacity=".4"});
+  setTimeout(()=>d.remove(),720);
+}
+function bump(){const b=$("#cartBtn");b.classList.remove("bump");void b.offsetWidth;b.classList.add("bump")}
+function okBtn(b,txt="✓ Agregado"){const o=b.textContent;b.classList.add("ok");b.textContent=txt;setTimeout(()=>{b.classList.remove("ok");b.textContent=o},1300)}
+
+document.addEventListener("click",e=>{
+  const q=e.target.closest("[data-quick]");
+  if(q){const p=PX[q.dataset.quick];const pi=p.unit==="kg"?(p.whole?0:2):0;addToCart(p.id,pi,1);fly(q,p.img);okBtn(q);toast(`${p.name} · ${presOf(p)[pi].l} agregado`);return}
+  const o=e.target.closest("[data-open]");if(o){openModal(o.dataset.open);return}
+  const cp=e.target.closest("[data-copy]");if(cp){copy(cp.dataset.copy,"Copiado al portapapeles");return}
+});
+
+/* Vista rápida */
+let mState=null,lastFocus=null;
+function openModal(pid){
+  const p=PX[pid],pres=presOf(p);mState={pid,pi:p.unit==="kg"&&!p.whole?0:0,q:1};lastFocus=document.activeElement;
+  const lv=Math.round(p.m*5);
+  $("#mcard").innerHTML=`<div class="ph">${media(p,600,600)}</div><div class="info">
+    <button class="x" type="button" data-mclose aria-label="Cerrar">×</button>
+    <span class="eyebrow">${LINE[p.line]}</span><h3 id="mtitle">${p.name}</h3><span style="font-style:italic;color:var(--ink-soft)">${p.alt}</span>
+    <p>${p.desc}</p>
+    <dl class="facts"><dt>Marmoleo</dt><dd><span class="ometer">${[1,2,3,4,5].map(i=>`<s class="${i<=lv?"on":""}"></s>`).join("")}</span></dd>
+    <dt>Cocción</dt><dd>${p.cook}</dd>${p.aging?`<dt>Maduración</dt><dd>${p.aging} días en frío</dd>`:""}<dt>Zona</dt><dd>${REG[p.region].n}</dd></dl>
+    <span class="eyebrow" style="color:var(--ink-soft)">Presentación</span>
+    <div class="pres" role="group" aria-label="Presentación">${pres.map((x,i)=>`<button type="button" data-pi="${i}" aria-pressed="${i===mState.pi}">${x.l}</button>`).join("")}</div>
+    <div class="mrow"><span class="stepper"><button type="button" data-mq="-" aria-label="Menos">−</button><span id="mq"></span><button type="button" data-mq="+" aria-label="Más">+</button></span>
+    <span class="tot" id="mtot"></span><button class="btn ox" type="button" id="madd" style="width:100%">Agregar a la cotización</button></div></div>`;
+  paint($("#mcard"));updModal();
+  $("#modal").classList.add("open");$("#modal").setAttribute("aria-hidden","false");$("#scrim").classList.add("open");document.body.style.overflow="hidden";
+  setTimeout(()=>$("#mcard .x").focus(),50);
+}
+function updModal(){const p=PX[mState.pid],pr=presOf(p)[mState.pi];$("#mq").textContent=qtyTxt(p.id,mState.pi,mState.q);$("#mtot").textContent=fmt(lineTotal(p.id,mState.pi,mState.q));
+  $$("#mcard .pres button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.pi===mState.pi))}
+$("#mcard").addEventListener("click",e=>{
+  if(e.target.closest("[data-mclose]"))return closeModal();
+  const pb=e.target.closest("[data-pi]");if(pb){mState.pi=+pb.dataset.pi;mState.q=1;updModal();return}
+  const s=e.target.closest("[data-mq]");if(s){const st=presOf(PX[mState.pid])[mState.pi].step;mState.q=Math.max(st,Math.round((mState.q+(s.dataset.mq==="+"?st:-st))*10)/10);updModal();return}
+  if(e.target.closest("#madd")){const b=$("#madd");addToCart(mState.pid,mState.pi,mState.q);fly(b,PX[mState.pid].img);okBtn(b,"✓ En tu cotización");toast(`${PX[mState.pid].name} agregado`);setTimeout(closeModal,650)}
+});
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+function closeModal(){if(!$("#modal").classList.contains("open"))return;$("#modal").classList.remove("open");$("#modal").setAttribute("aria-hidden","true");
+  if(!$("#drawer").classList.contains("open")){$("#scrim").classList.remove("open");document.body.style.overflow=""}if(lastFocus)lastFocus.focus()}
+
+/* Mapa de cortes */
+/* Zonas calcadas sobre la infografía (coordenadas en píxeles de la imagen 1672×941) */
+const REG={
+ chuck:{n:"Paleta",en:"Chuck / Shoulder",d:"Músculo de trabajo con buen marmoleo y mucho sabor. De aquí sale el Denver, la mejor relación precio–terneza de la línea F1.",
+  list:["Chuck roast","Blade steak","Costilla corta","Clod de paleta","Denver","Chuck eye"],
+  pts:[[548,232],[615,272],[640,330],[655,400],[658,470],[600,455],[540,440],[490,428],[490,350],[515,280]]},
+ rib:{n:"Costillar",en:"Rib",d:"La zona con más grasa intramuscular. En el cruce F1 es donde mejor se nota el aporte del Wagyu.",
+  list:["Ribeye","Prime rib","Back ribs","Tapa de ribeye"],
+  pts:[[615,272],[700,280],[780,288],[832,293],[838,380],[840,490],[760,475],[658,470],[655,400],[640,330]]},
+ shortloin:{n:"Lomo corto",en:"Short loin",d:"Los cortes más tiernos del animal: el lomo ancho para parrilla y el lomo fino para sellar y hornear.",
+  list:["New York strip","T-Bone","Porterhouse","Filet mignon"],
+  pts:[[832,293],[900,292],[970,292],[980,380],[998,468],[900,490],[840,490],[838,380]]},
+ sirloin:{n:"Solomo y cadera",en:"Sirloin",d:"Aquí está la picaña (coulotte), con su capa de grasa: la reina de la parrilla colombiana.",
+  list:["Solomo","Tri-tip","Coulotte (picaña)","Top sirloin"],
+  pts:[[970,292],[1040,288],[1115,285],[1100,340],[1100,420],[1112,470],[998,468],[980,380]]},
+ round:{n:"Pierna",en:"Round / Hindquarter",d:"Cortes magros y firmes del cuarto trasero. Los usamos para la molida del día.",
+  list:["Bola de pierna","Centro de pierna","Muchacho","Punta de pierna"],
+  pts:[[1115,285],[1200,295],[1260,330],[1285,400],[1280,480],[1250,540],[1200,555],[1125,555],[1100,540],[1060,520],[1112,470],[1100,420],[1100,340]]},
+ brisket:{n:"Pecho",en:"Brisket",d:"Fibra larga y grasa: ideal para ahumar. Es la base de nuestra hamburguesa F1 80/20.",
+  list:["Pecho","Deckle","Punta de pecho"],
+  pts:[[490,428],[540,440],[600,455],[658,470],[660,520],[665,570],[620,575],[580,570],[540,560],[515,530],[500,480]]},
+ plate:{n:"Falda delantera",en:"Plate",d:"Costillas carnosas y entraña: cortes de cocción lenta o brasa rápida, llenos de sabor.",
+  list:["Costilla corta","Entraña","Costilla tipo flanken"],
+  pts:[[658,470],[760,475],[840,490],[870,545],[895,580],[800,585],[700,585],[665,570],[660,520]]},
+ flank:{n:"Sobrebarriga",en:"Flank",d:"Corte plano de fibra marcada. Sudada, al horno o en tiras finas a la parrilla.",
+  list:["Sobrebarriga (flank)","Lomito de entraña (hanger)"],
+  pts:[[840,490],[900,490],[998,468],[1112,470],[1060,520],[1000,560],[950,575],[895,580],[870,545]]},
+ shank:{n:"Morcillo",en:"Shank",d:"Rico en colágeno, para caldos, osobuco y cocciones largas.",
+  list:["Morcillo"],
+  pts:[[1125,555],[1200,555],[1240,590],[1245,640],[1230,690],[1200,700],[1170,680],[1150,630],[1135,590]]}
+};
+const cen=pts=>{let x=0,y=0;pts.forEach(p=>{x+=p[0];y+=p[1]});return [x/pts.length,y/pts.length]};
+let curReg="rib";
+$("#hot").innerHTML=Object.entries(REG).map(([k,r])=>`<polygon data-r="${k}" points="${r.pts.map(p=>p.join(",")).join(" ")}" tabindex="0" role="button" aria-label="${r.n} (${r.en})"></polygon>`).join("")+
+  `<g id="pinG"><circle class="ring" r="14"></circle><circle class="pin" r="8"></circle></g>`;
+$("#zchips").innerHTML=Object.entries(REG).map(([k,r])=>`<button class="zchip" type="button" data-z="${k}" aria-pressed="false">${r.n}</button>`).join("");
+function cutThumb(p){return p.img?`<img src="${p.img}" alt="">`:`<canvas width="68" height="68" data-m="${p.m}" data-s="${hash(p.id)}"></canvas>`}
+function selReg(k,user){
+  curReg=k;$("#hot").classList.add("dim");
+  $$("#hot polygon").forEach(p=>p.classList.toggle("on",p.dataset.r===k));
+  $$(".zchip").forEach(b=>b.setAttribute("aria-pressed",b.dataset.z===k));
+  const [cx,cy]=cen(REG[k].pts);$$("#pinG circle").forEach(c=>{c.setAttribute("cx",cx);c.setAttribute("cy",cy)});
+  const r=REG[k],cuts=P.filter(p=>p.region===k);
+  $("#mapinfo").innerHTML=`<div><p class="en">${r.en}</p><h3>${r.n}</h3><p>${r.d}</p>
+     <p class="sub" style="margin-top:18px">Cortes de esta zona</p><ul>${r.list.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+    <div><p class="sub">Lo que te llevamos de esta zona</p>${cuts.length?`<div class="cuts">${cuts.map(c=>`<button class="cutbtn" type="button" data-open="${c.id}">${cutThumb(c)}<span>${c.name}<small>${LINE[c.line]} · ${fmt(c.price)}/${c.unit}</small></span></button>`).join("")}</div>`:
+     `<p>Disponible bajo pedido. <a href="#contacto" style="color:var(--gold)">Escríbenos</a> y te lo cotizamos.</p>`}</div>`;
+  paint($("#mapinfo"));
+}
+$("#hot").addEventListener("click",e=>{const p=e.target.closest("polygon");if(p)selReg(p.dataset.r,true)});
+$("#hot").addEventListener("keydown",e=>{const p=e.target.closest("polygon");if(p&&(e.key==="Enter"||e.key===" ")){e.preventDefault();selReg(p.dataset.r,true)}});
+$("#zchips").addEventListener("click",e=>{const b=e.target.closest("[data-z]");if(b)selReg(b.dataset.z,true)});
+selReg(curReg);
+
+/* Calculadora */
+const PLANS={asado:{g:400,mix:[["b-punta",.5],["b-churrasco",.3],["w-picana",.2]]},premium:{g:300,mix:[["w-ribeye",.4],["w-strip",.3],["w-tomahawk",.3]]},almuerzo:{g:250,mix:[["b-lomo",.5],["b-churrasco",.5]]}};
+let plan="asado",sugg=[];
+function calc(){const n=+$("#pp").value;$("#ppo").textContent=n;const P0=PLANS[plan],tot=n*P0.g/1000;
+  sugg=P0.mix.map(([pid,f])=>({pid,kg:Math.max(.5,Math.round(tot*f*2)/2)}));
+  const cost=sugg.reduce((a,s)=>a+PX[s.pid].price*s.kg,0);
+  $("#sugg").innerHTML=sugg.map(s=>`<div><span>${PX[s.pid].name} <span class="note">${LINE[PX[s.pid].line]}</span></span><span class="mono">${s.kg.toLocaleString("es-CO")} kg</span></div>`).join("")+
+    `<div class="t"><span>${P0.g} g por persona · ${tot.toLocaleString("es-CO",{maximumFractionDigits:1})} kg</span><span>${fmt(cost)}</span></div>`}
+$("#pp").addEventListener("input",calc);
+$$(".seg button").forEach(b=>b.addEventListener("click",()=>{plan=b.dataset.plan;$$(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b));calc()}));
+$("#addSugg").addEventListener("click",e=>{sugg.forEach(s=>{const p=PX[s.pid];const pi=presOf(p).findIndex(x=>x.l==="Por kilo");addToCart(s.pid,pi,s.kg)});fly(e.currentTarget);okBtn(e.currentTarget,"✓ Agregado");toast(`Plan para ${$("#pp").value} personas agregado`)});
+calc();
+
+/* Zonas */
+$("#zone").innerHTML=zoneOpts;$("#hz").innerHTML=zoneOpts;$("#dzone").innerHTML=zoneOpts;
+function zoneInfo(i){const [z,rid]=ZONES[i],r=ROUTES[rid];
+  if(rid==="NX")return {html:`<b>Envío nacional</b><span>Coordinamos transportadora refrigerada a tu ciudad. Cotizamos el flete con tu pedido.</span>`,fee:r.fee,rid};
+  if(rid==="PK")return {html:`<b>Recoges sin costo</b><span>Lunes a sábado de 7:00 a. m. a 5:00 p. m. en nuestro punto de Medellín.</span>`,fee:0,rid};
+  const nd=nextDay(r.d);
+  return {html:`<b>Sí, ruta ${r.n}</b><span>${z}: entregamos ${r.d.map(d=>DN[d].toLowerCase()).join(", ")}. Próxima entrega: <strong>${nd.toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"})}</strong>. Envío ${fmt(r.fee)} · gratis desde $500.000.</span>
+   <div class="days">${[1,2,3,4,5,6].map(d=>`<span class="${r.d.includes(d)?"on":""}">${DN[d]}</span>`).join("")}</div>`,fee:r.fee,rid,next:nd}}
+function showZone(){$("#zoneOut").innerHTML=zoneInfo(+$("#zone").value).html;try{localStorage.setItem("pbm-zone",$("#zone").value)}catch(e){}}
+try{const z=localStorage.getItem("pbm-zone");if(z!==null){$("#zone").value=z;$("#dzone").value=z;$("#hz").value=z}}catch(e){}
+$("#zone").addEventListener("change",()=>{$("#dzone").value=$("#zone").value;$("#hz").value=$("#zone").value;showZone();renderCart()});
+showZone();
+
+/* Carrito */
+function renderCart(){
+  const ks=Object.keys(cart).filter(k=>PX[k.split("|")[0]]);
+  $("#items").innerHTML=ks.length?ks.map(k=>{const [pid,pi]=k.split("|"),p=PX[pid],pr=presOf(p)[+pi],q=cart[k];
+    return `<div class="qi"><div class="th">${p.img?`<img class="th" src="${p.img}" alt="">`:`<canvas width="112" height="112" data-m="${p.m}" data-s="${hash(p.id)}"></canvas>`}</div>
+    <span class="nm">${p.name}<small>${pr.l} · ${LINE[p.line]}</small></span><span class="sub">${fmt(lineTotal(pid,+pi,q))}</span>
+    <span class="stepper"><button type="button" data-cq="-" data-k="${k}" aria-label="Menos">−</button><span>${qtyTxt(pid,+pi,q)}</span><button type="button" data-cq="+" data-k="${k}" aria-label="Más">+</button></span>
+    <button class="rm" type="button" data-rm="${k}">Quitar</button></div>`}).join(""):
+    `<div class="empty"><span>Tu cotización está vacía.</span><button class="btn sm ox" type="button" id="goCuts">Ver cortes</button></div>`;
+  paint($("#items"));
+  const t=totals();
+  $("#totals").innerHTML=`<div><span>Subtotal</span><span>${fmt(t.sub)}</span></div>${t.desc?`<div><span>Descuento HORECA 8%</span><span>−${fmt(t.desc)}</span></div>`:""}
+   <div><span>Envío en frío</span><span>${t.ship?fmt(t.ship):"Sin costo"}</span></div><div class="big"><span>Total estimado</span><span>${fmt(t.total)}</span></div>`;
+  $("#count").textContent=ks.length;$("#mtotal").textContent=`${ks.length} ${ks.length===1?"corte":"cortes"} · ${fmt(t.total)}`;
+  $("#dfoot").hidden=!ks.length;onScroll();
+}
+function totals(){let sub=0;for(const k in cart){const [pid,pi]=k.split("|");if(PX[pid])sub+=lineTotal(pid,+pi,cart[k])}
+  const tipo=$("#tipo").value,zi=zoneInfo(+$("#dzone").value);const desc=tipo==="restaurante"&&sub>=1e6?sub*.08:0;
+  const ship=sub>=5e5&&zi.rid!=="NX"?0:zi.fee;return {sub,desc,ship,total:sub-desc+ship,zi,tipo}}
+$("#items").addEventListener("click",e=>{
+  const s=e.target.closest("[data-cq]");if(s){const k=s.dataset.k,[pid,pi]=k.split("|"),st=presOf(PX[pid])[+pi].step;cart[k]=Math.round((cart[k]+(s.dataset.cq==="+"?st:-st))*10)/10;if(cart[k]<=0)delete cart[k];save();renderCart();return}
+  const r=e.target.closest("[data-rm]");if(r){const row=r.closest(".qi");row.style.transition=".25s";row.style.opacity="0";row.style.transform="translateX(30px)";setTimeout(()=>{delete cart[r.dataset.rm];save();renderCart()},RM?0:220);return}
+  if(e.target.id==="goCuts"){closeDrawer();location.hash="cortes"}
+});
+["tipo","dzone"].forEach(id=>$("#"+id).addEventListener("change",renderCart));
+
+function openDrawer(){lastFocus=document.activeElement;$("#drawer").classList.add("open");$("#drawer").setAttribute("aria-hidden","false");$("#scrim").classList.add("open");document.body.style.overflow="hidden";setTimeout(()=>$("#dclose").focus(),60)}
+function closeDrawer(){$("#drawer").classList.remove("open");$("#drawer").setAttribute("aria-hidden","true");if(!$("#modal").classList.contains("open")){$("#scrim").classList.remove("open");document.body.style.overflow=""}if(lastFocus)lastFocus.focus()}
+$("#cartBtn").addEventListener("click",openDrawer);$("#mopen").addEventListener("click",openDrawer);$("#dclose").addEventListener("click",closeDrawer);
+$("#scrim").addEventListener("click",()=>{closeModal();closeDrawer()});
+addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeDrawer()}});
+
+$("#qform").addEventListener("submit",e=>{
+  e.preventDefault();const t=totals(),err=$("#err");
+  const nombre=$("#nombre").value.trim(),tel=$("#tel").value.trim();
+  const m=!count()?"Agrega al menos un corte.":!nombre?"Escribe tu nombre o el de tu negocio.":tel.replace(/\D/g,"").length<7?"Escribe un celular válido para confirmarte.":"";
+  err.hidden=!m;err.textContent=m;if(m){$("#qform").animate&&!RM&&$("#qform").animate([{transform:"translateX(0)"},{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"translateX(0)"}],{duration:280});return}
+  const lines=Object.keys(cart).map(k=>{const [pid,pi]=k.split("|"),p=PX[pid];return `• ${p.name} (${LINE[p.line]}) — ${presOf(p)[+pi].l} × ${qtyTxt(pid,+pi,cart[k])} = ${fmt(lineTotal(pid,+pi,cart[k]))}`});
+  const notas=$("#notas").value.trim();
+  const txt=`COTIZACIÓN ${qno} · Premium Beef Matador
+Fecha: ${new Date().toLocaleDateString("es-CO")}
+Cliente: ${nombre} (${$("#tipo").selectedOptions[0].text})
+Celular: ${tel}
+Entrega: ${ZONES[+$("#dzone").value][0]}${t.zi.next?" · "+t.zi.next.toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"}):""}
+
+${lines.join("\n")}
+
+Subtotal: ${fmt(t.sub)}${t.desc?`\nDescuento HORECA 8%: −${fmt(t.desc)}`:""}
+Envío en frío: ${t.ship?fmt(t.ship):"Sin costo"}
+TOTAL ESTIMADO: ${fmt(t.total)}${notas?`\n\nNotas: ${notas}`:""}
+
+Precios sujetos a disponibilidad y peso final del corte.`;
+  $("#rtext").textContent=txt;$("#wa").href=`https://wa.me/${WA}?text=${encodeURIComponent(txt)}`;
+  $("#qform").hidden=true;$("#result").hidden=false;toast("Cotización lista para enviar");
+});
+$("#editQ").addEventListener("click",()=>{$("#result").hidden=true;$("#qform").hidden=false});
+$("#copyQ").addEventListener("click",()=>copy($("#rtext").textContent,"Cotización copiada",$("#rtext")));
+
+/* HORECA */
+$("#horecaForm").addEventListener("submit",e=>{
+  e.preventDefault();const n=$("#hn").value.trim(),t=$("#ht").value.trim(),er=$("#herr");
+  const m=!n?"Escribe el nombre del restaurante.":t.replace(/\D/g,"").length<7?"Escribe un celular válido.":"";er.hidden=!m;er.textContent=m;if(m)return;
+  const txt=`Hola, quiero abrir una cuenta HORECA con Premium Beef Matador.\nRestaurante: ${n}\nCelular: ${t}\nZona: ${ZONES[+$("#hz").value][0]}\nVolumen semanal estimado: ${$("#hv").value}`;
+  $("#hres").hidden=false;$("#hres").innerHTML=`<p style="color:var(--on-char-soft);font-size:15px">Listo, ${n.replace(/[<>&]/g,"")}. Envía la solicitud y un asesor te contacta con tu lista de precios.</p>
+   <a class="btn gold sm" style="margin-top:10px" href="https://wa.me/${WA}?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">Enviar por WhatsApp</a>`;
+  toast("Solicitud HORECA preparada");
+});
+
+/* Testimonios */
+const car=$("#car");const stepC=d=>car.scrollBy({left:d*car.querySelector(".q").getBoundingClientRect().width+d*20,behavior:RM?"auto":"smooth"});
+$("#prev").addEventListener("click",()=>stepC(-1));$("#next").addEventListener("click",()=>stepC(1));
+let auto=setInterval(()=>{if(car.scrollLeft+car.clientWidth>=car.scrollWidth-4)car.scrollTo({left:0,behavior:RM?"auto":"smooth"});else stepC(1)},5500);
+car.addEventListener("pointerenter",()=>clearInterval(auto));
+if(RM)clearInterval(auto);
+
+/* Utilidades */
+function copy(t,msg,el){const sel=()=>{if(!el)return toast(t);const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);toast("Texto seleccionado, cópialo")};
+  try{navigator.clipboard.writeText(t).then(()=>toast(msg),sel)}catch(e){sel()}}
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2200)}
+
+renderGrid();renderCart();onScroll();
+})();
+</script>
+
+</body>
+</html>

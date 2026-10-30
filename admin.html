@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Matador Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: barra lateral clara → barra superior con búsqueda global → vista con banner fotográfico, resumen e infografías; detalle en panel lateral deslizante */
+:root{
+  --bg:#F6F1EE;--surface:#FFFFFF;--surface-2:#FBF7F5;--sunk:#EFE7E3;--ink:#2B1D1E;--ink-2:#6F5C5C;--ink-3:#9C8A89;--line:#E9DEDA;
+  --wine:#9C3B40;--wine-soft:#F4E1E0;--gold:#C49A4A;--gold-soft:#F6EBD6;--sage:#5F8A6A;--sage-soft:#E2EDE4;--sky:#5E82A8;--sky-soft:#E1EAF3;--plum:#7D5A86;--plum-soft:#EDE3F0;
+  --warn:#B07A1F;--warn-soft:#F8ECD2;--bad:#B5413F;--bad-soft:#F7DEDC;
+  --shadow:0 1px 2px rgba(60,30,30,.05),0 10px 30px -18px rgba(60,30,30,.22);
+  --font-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --font-ui:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:14px;--ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#171113;--surface:#1F181A;--surface-2:#231B1D;--sunk:#2A2124;--ink:#F2E8E5;--ink-2:#BCA9A6;--ink-3:#8C7A78;--line:#352A2D;
+  --wine:#D9686D;--wine-soft:#3A2224;--gold:#DDB66A;--gold-soft:#3A2F1C;--sage:#8FBF9A;--sage-soft:#1E2C22;--sky:#8DB0D6;--sky-soft:#1C2633;--plum:#B897C2;--plum-soft:#2D2231;
+  --warn:#E5B866;--warn-soft:#3A2E17;--bad:#EF8E8B;--bad-soft:#3D1D1D;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.6);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#171113;--surface:#1F181A;--surface-2:#231B1D;--sunk:#2A2124;--ink:#F2E8E5;--ink-2:#BCA9A6;--ink-3:#8C7A78;--line:#352A2D;
+  --wine:#D9686D;--wine-soft:#3A2224;--gold:#DDB66A;--gold-soft:#3A2F1C;--sage:#8FBF9A;--sage-soft:#1E2C22;--sky:#8DB0D6;--sky-soft:#1C2633;--plum:#B897C2;--plum-soft:#2D2231;
+  --warn:#E5B866;--warn-soft:#3A2E17;--bad:#EF8E8B;--bad-soft:#3D1D1D;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -18px rgba(0,0,0,.6);color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-ui);font-size:14px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--surface)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--gold) 70%,transparent);outline-offset:2px;border-radius:6px}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.num,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--ink-2)}.faint{color:var(--ink-3)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.disp{font-family:var(--font-display);text-transform:uppercase;letter-spacing:.02em;line-height:1}
+
+/* Shell */
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100%}
+.side{background:var(--surface);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto;padding:18px 14px 18px max(14px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 10px}
+.brand .mk{width:38px;height:38px;border-radius:11px;background:var(--wine);color:#fff;display:grid;place-items:center;flex:none}
+.brand .mk svg{width:24px;height:24px}
+.brand b{font-family:var(--font-display);font-weight:900;font-size:20px;letter-spacing:.05em;display:block;line-height:1}
+.brand small{font-size:11px;color:var(--ink-3)}
+.nav{display:grid;gap:2px}
+.nav .g{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);padding:12px 10px 4px}
+.nav a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;text-decoration:none;color:var(--ink-2);font-weight:600;transition:background .2s,color .2s}
+.nav a svg{width:18px;height:18px;flex:none;opacity:.8}
+.nav a:hover{background:var(--surface-2);color:var(--ink)}
+.nav a[aria-current="page"]{background:var(--wine-soft);color:var(--wine)}
+.nav a .b{margin-left:auto;font-family:var(--font-mono);font-size:11px;background:var(--wine);color:#fff;border-radius:9px;padding:0 7px;min-width:20px;text-align:center}
+.side .foot{margin-top:auto;display:grid;gap:8px;font-size:12px;color:var(--ink-3);padding:0 8px}
+.side .foot button{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:7px 10px;cursor:pointer;color:var(--ink-2);font-weight:600}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .in{display:flex;align-items:center;gap:12px;padding:10px max(24px,env(safe-area-inset-right,0px)) 10px 24px}
+.sbtn{display:flex;align-items:center;gap:10px;flex:1;max-width:460px;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 12px;color:var(--ink-3);cursor:pointer;text-align:left;transition:border-color .2s,box-shadow .2s}
+.sbtn:hover{border-color:var(--ink-3);box-shadow:var(--shadow)}
+.sbtn svg{width:16px;height:16px}
+.sbtn kbd{margin-left:auto;font-family:var(--font-mono);font-size:11px;border:1px solid var(--line);border-radius:6px;padding:1px 6px;background:var(--surface-2)}
+.who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:13px}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;flex:none;color:#fff}
+main{min-width:0;padding:22px max(24px,env(safe-area-inset-right,0px)) 80px max(24px,env(safe-area-inset-left,0px))}
+
+/* Bloques */
+.vhead{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.vhead h1{font-family:var(--font-display);font-weight:900;font-size:42px;text-transform:uppercase;letter-spacing:.02em;line-height:1}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);min-width:0}
+.card>header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px 0;flex-wrap:wrap}
+.card>header h3{font-size:15px;font-weight:700}
+.card .pb{padding:14px 18px 18px}
+.grid2{display:grid;grid-template-columns:1.65fr 1fr;gap:16px}
+.grid2e{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stack{display:grid;gap:16px}
+@media (max-width:1150px){.grid2,.grid2e{grid-template-columns:1fr}}
+
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;font-size:13px;white-space:nowrap;color:var(--ink);transition:transform .15s var(--ease),box-shadow .2s,background .2s,border-color .2s}
+.btn:hover{border-color:var(--ink-3);box-shadow:var(--shadow)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--wine);border-color:var(--wine);color:#fff}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.seg{display:inline-flex;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:5px 11px;border-radius:8px;cursor:pointer;font-weight:600;font-size:12.5px;color:var(--ink-2);transition:background .2s,color .2s,box-shadow .2s}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-ok{background:var(--sage-soft);color:var(--sage)}.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)}.p-info{background:var(--sky-soft);color:var(--sky)}
+.p-mute{background:var(--sunk);color:var(--ink-2)}.p-gold{background:var(--gold-soft);color:var(--warn)}.p-plum{background:var(--plum-soft);color:var(--plum)}
+.tag{font-size:11px;font-weight:700;padding:1px 8px;border-radius:6px;background:var(--sunk);color:var(--ink-2);white-space:nowrap}
+.tag.wagyu{background:var(--gold-soft);color:var(--warn)}
+
+/* Banner fotográfico */
+.banner{position:relative;overflow:hidden;border-radius:18px;min-height:190px;display:flex;align-items:flex-end;color:#F7EDE9;isolation:isolate;margin-bottom:16px;box-shadow:var(--shadow)}
+.banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.2s var(--ease)}
+.banner:hover img{transform:scale(1.03)}
+.banner::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(24,14,14,.92) 25%,rgba(24,14,14,.45) 60%,rgba(24,14,14,.1))}
+.banner .in{padding:22px 24px;display:grid;gap:8px;width:100%}
+.banner h2{font-family:var(--font-display);font-size:40px;font-weight:900;text-transform:uppercase;line-height:1}
+.banner p{color:#D8C7C2;max-width:56ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);border-radius:999px;padding:6px 12px;text-decoration:none;color:#fff;font-weight:600;font-size:12.5px;transition:background .2s,transform .2s var(--ease)}
+.chip:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+.chip b{font-family:var(--font-mono);font-weight:500}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:14px 16px;display:grid;gap:4px}
+.kpi .l{font-size:12px;font-weight:600;color:var(--ink-2)}
+.kpi .v{font-family:var(--font-mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .d{font-size:12px;font-weight:600}
+.up{color:var(--sage)}.down{color:var(--bad)}
+.spark{width:100%;height:30px;display:block}
+@media (max-width:1250px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Gráficas */
+.chartbox{position:relative}
+svg.ch{display:block;width:100%;height:auto;overflow:visible}
+svg.ch text{fill:var(--ink-3);font-family:var(--font-mono);font-size:10.5px}
+svg.ch .grid{stroke:var(--line);stroke-width:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2);font-weight:600}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.brush{position:relative;user-select:none;touch-action:none;cursor:crosshair}
+.brush svg{display:block;width:100%;height:58px}
+.tip{position:fixed;z-index:95;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:10px;padding:8px 10px;font-size:12px;box-shadow:0 10px 30px -10px rgba(0,0,0,.4);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s;max-width:260px}
+.tip.show{opacity:1;transform:none}
+.tip b{display:block;margin-bottom:2px}
+.tip .r{display:flex;justify-content:space-between;gap:14px;font-family:var(--font-mono)}
+.donut path{transition:transform .25s var(--ease),opacity .2s;transform-origin:center;transform-box:view-box;cursor:pointer}
+.donut path.dim{opacity:.35}
+.dleg{display:grid;gap:8px}
+.dleg button{display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:6px 8px;border-radius:8px;cursor:pointer;text-align:left;transition:background .2s}
+.dleg button:hover{background:var(--surface-2)}
+.dleg i{width:10px;height:10px;border-radius:3px;flex:none}
+.dleg span{flex:1;font-weight:600}
+.hm{display:grid;gap:3px}
+.hm .row{display:grid;grid-template-columns:34px repeat(var(--cols),1fr);gap:3px;align-items:center}
+.hm .row span{font-size:10.5px;color:var(--ink-3);font-family:var(--font-mono)}
+.hm i{aspect-ratio:1;border-radius:4px;background:var(--sunk);transition:transform .15s}
+.hm i:hover{transform:scale(1.25);outline:2px solid var(--ink)}
+.insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.ins{background:var(--surface-2);border-radius:12px;padding:12px 14px;border:1px solid var(--line)}
+.ins b{display:block;font-size:15px}
+.ins span{font-size:12px;color:var(--ink-2)}
+@media (max-width:800px){.insights{grid-template-columns:1fr}}
+
+.bars{display:grid;gap:10px}
+.barrow{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;cursor:pointer;padding:4px;border-radius:10px;transition:background .2s}
+.barrow:hover{background:var(--surface-2)}
+.th{width:44px;height:44px;border-radius:10px;object-fit:cover;display:block;background:#2a1517;overflow:hidden}
+.th canvas{width:44px;height:44px;display:block}
+.barrow .nm{font-weight:700;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.track{height:8px;border-radius:6px;background:var(--sunk);overflow:hidden;margin-top:6px}
+.track i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--wine),color-mix(in srgb,var(--wine) 60%,var(--gold)));transform-origin:left;animation:grow .8s var(--ease) both}
+@keyframes grow{from{transform:scaleX(0)}}
+
+/* Mapa de calor sobre infografía */
+.cow{position:relative;border-radius:12px;overflow:hidden;background:#121212}
+.cow img{display:block;width:100%;height:auto}
+.cow svg{position:absolute;inset:0;width:100%;height:100%}
+.cow polygon{stroke:rgba(255,255,255,.6);stroke-width:2;cursor:pointer;transition:fill .3s,stroke-width .2s}
+.cow polygon:hover,.cow polygon.on{stroke:#DDB66A;stroke-width:6}
+.cow .lb rect{fill:rgba(18,12,12,.82)}
+.cow .lb text{fill:#fff;font-family:var(--font-mono);font-size:26px;font-weight:500}
+.cow .lb{pointer-events:none}
+
+/* Tablas */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+th button{border:0;background:transparent;padding:0;font:inherit;color:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+th button[data-dir]::after{content:attr(data-dir);color:var(--wine)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+.r{text-align:right}
+.cl{display:flex;align-items:center;gap:10px;min-width:0}
+.cl .av{width:30px;height:30px;font-size:11px}
+.cl b{display:block;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl small{display:block;color:var(--ink-3);font-size:11.5px}
+.thumbs{display:flex}
+.thumbs .th{width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);margin-left:-8px}
+.thumbs .th:first-child{margin-left:0}
+.thumbs .th canvas{width:26px;height:26px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.inp{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:7px 10px;font-size:13px;color:var(--ink)}
+.inp.search{min-width:220px;flex:1;max-width:320px}
+.sumbar{display:flex;gap:18px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:var(--surface-2);border-bottom:1px solid var(--line);font-size:13px}
+.sumbar b{font-family:var(--font-mono);font-weight:500}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2)}
+.empty{padding:30px 18px;text-align:center;color:var(--ink-3)}
+
+/* Kanban */
+.kanban{display:grid;grid-template-columns:repeat(4,minmax(240px,1fr));gap:14px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--sunk);border-radius:var(--r);padding:12px;min-height:220px;transition:background .2s,outline-color .2s;outline:2px dashed transparent}
+.col.over{background:var(--wine-soft);outline-color:var(--wine)}
+.col h4{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin-bottom:10px}
+.oc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:grid;gap:8px;cursor:grab;box-shadow:var(--shadow);transition:transform .2s var(--ease),opacity .2s;animation:pop .3s var(--ease) both}
+.oc:hover{transform:translateY(-2px)}
+.oc.drag{opacity:.4}
+@keyframes pop{from{opacity:0;transform:scale(.97)}}
+.oc .t{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.oc .meta{font-size:12px;color:var(--ink-2)}
+.oc .acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* Clientes */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.ccard{padding:16px;display:grid;gap:10px;cursor:pointer;transition:transform .2s var(--ease),box-shadow .2s;text-align:left;border:1px solid var(--line);font:inherit;color:inherit;background:var(--surface)}
+.ccard:hover{transform:translateY(-3px)}
+.ccard .top{display:flex;gap:10px;align-items:center}
+.ccard .top b{display:block;font-size:14px}
+.ccard .row{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2)}
+.ccard .row b{font-family:var(--font-mono);color:var(--ink);font-weight:500}
+
+/* Inventario */
+.inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.icard{overflow:hidden;display:grid}
+.icard .ph{position:relative;height:120px;background:#2a1517}
+.icard .ph img,.icard .ph canvas{width:100%;height:100%;object-fit:cover;display:block}
+.icard .ph .tag{position:absolute;top:10px;left:10px}
+.icard .ph .ring{position:absolute;right:12px;bottom:-26px;width:64px;height:64px;border-radius:50%;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
+.icard .ph .ring svg{position:absolute;inset:4px}
+.icard .ph .ring b{font-family:var(--font-mono);font-size:12px;font-weight:500}
+.icard .bd{padding:14px 16px 16px;display:grid;gap:8px}
+.icard h3{font-size:15px;font-weight:800;padding-right:70px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kv div{background:var(--surface-2);border-radius:10px;padding:6px 8px}
+.kv span{display:block;font-size:10.5px;color:var(--ink-3);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.kv b{font-family:var(--font-mono);font-weight:500;font-size:13px}
+.lots{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.lot{padding:16px;display:grid;gap:10px}
+.yield{display:flex;height:14px;border-radius:7px;overflow:hidden}
+.yield i{display:block;height:100%}
+.age{height:6px;background:var(--sunk);border-radius:4px;overflow:hidden}
+.age i{display:block;height:100%;background:var(--sage);border-radius:4px}
+
+/* Rutas */
+.rmap{background:var(--surface-2);border-radius:12px}
+.rmap svg{display:block;width:100%;height:auto}
+.rmap .river{fill:none;stroke:var(--sky);stroke-width:5;opacity:.35;stroke-linecap:round}
+.rmap .zn{cursor:pointer;transition:r .3s}
+.rmap text{font-family:var(--font-ui);font-size:11px;font-weight:700;fill:var(--ink-2)}
+.rmap .rl{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 6;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+.stop{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line)}
+.stop:last-child{border-bottom:0}
+.stop .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono);font-size:12px;color:#fff}
+details.man{border-top:1px solid var(--line)}
+details.man summary{cursor:pointer;padding:12px 0;font-weight:700;list-style:none;display:flex;justify-content:space-between}
+details.man summary::after{content:"+";color:var(--ink-3);transition:transform .2s}
+details.man[open] summary::after{transform:rotate(45deg)}
+details.man ol{margin:0 0 12px;padding-left:20px;display:grid;gap:6px;color:var(--ink-2)}
+
+/* Embudo y recurrentes */
+.funnel{display:grid;gap:8px}
+.fstep{display:grid;grid-template-columns:120px 1fr 70px;gap:12px;align-items:center}
+.fbar{height:34px;border-radius:9px;display:flex;align-items:center;padding:0 12px;color:#fff;font-family:var(--font-mono);font-size:13px;transform-origin:left;animation:grow .8s var(--ease) both}
+.week{display:grid;grid-template-columns:repeat(6,minmax(130px,1fr));gap:10px;overflow-x:auto}
+.day{background:var(--sunk);border-radius:12px;padding:10px;min-height:150px}
+.day h4{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:8px;display:flex;justify-content:space-between}
+.rchip{background:var(--surface);border-radius:10px;padding:8px 10px;margin-bottom:8px;border-left:4px solid var(--wine);box-shadow:var(--shadow);font-size:12.5px;cursor:pointer;transition:transform .2s var(--ease),opacity .2s}
+.rchip:hover{transform:translateY(-2px)}
+.rchip.off{opacity:.45;border-left-color:var(--ink-3)}
+.rchip b{display:block;font-size:12.5px}
+
+.mods{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.mod{padding:16px;display:grid;gap:6px;align-content:start}
+.mod h3{font-size:15px;font-weight:800}
+.mod p{font-size:13px;color:var(--ink-2)}
+
+/* Panel lateral, modal, paleta */
+.scrim{position:fixed;inset:0;background:rgba(30,15,16,.35);backdrop-filter:blur(2px);z-index:70;opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);z-index:71;background:var(--surface);transform:translateX(104%);transition:transform .4s var(--ease);display:flex;flex-direction:column;box-shadow:-30px 0 60px -30px rgba(0,0,0,.35);border-radius:18px 0 0 18px;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer.open{transform:none}
+.drawer header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.drawer .db{flex:1;overflow:auto;padding:18px 20px;display:grid;gap:18px;align-content:start}
+.x{border:0;background:var(--sunk);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;flex:none;transition:transform .2s}
+.x:hover{transform:rotate(90deg)}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tl li{display:grid;grid-template-columns:22px 1fr auto;gap:10px;padding-bottom:14px;position:relative}
+.tl li::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--sage);margin-top:4px;box-shadow:0 0 0 4px var(--sage-soft)}
+.tl li::after{content:"";position:absolute;left:5px;top:18px;bottom:0;width:2px;background:var(--line)}
+.tl li:last-child::after{display:none}
+.tl li.pend::before{background:var(--line);box-shadow:none}
+.tl small{color:var(--ink-3);font-family:var(--font-mono);font-size:11.5px}
+.items{display:grid;gap:8px}
+.it{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center}
+.ov{position:fixed;inset:0;z-index:80;display:grid;place-items:start center;padding:12vh var(--gr,16px) 20px;pointer-events:none}
+.ov .box{pointer-events:auto;width:min(620px,100%);background:var(--surface);border-radius:18px;box-shadow:0 40px 80px -30px rgba(0,0,0,.45);border:1px solid var(--line);transform:translateY(-10px) scale(.98);opacity:0;transition:.25s var(--ease);max-height:76vh;display:flex;flex-direction:column;overflow:hidden}
+.ov.open .box{transform:none;opacity:1}
+.pal input{border:0;border-bottom:1px solid var(--line);padding:16px 18px;font-size:16px;background:transparent;outline:none;width:100%}
+.pal .res{overflow:auto;padding:6px}
+.pal .ri{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;cursor:pointer}
+.pal .ri[aria-selected="true"]{background:var(--wine-soft)}
+.pal .ri small{margin-left:auto;color:var(--ink-3);font-size:11.5px}
+.pal .grp{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);padding:10px 12px 4px}
+.form{display:grid;gap:10px;padding:18px}
+.form label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--ink-2)}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mfoot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}
+.mhead h3{font-family:var(--font-display);font-size:26px;text-transform:uppercase;font-weight:900}
+.err{color:var(--bad);font-size:12.5px}
+.toast{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:96;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-weight:600;font-size:13px;box-shadow:0 20px 40px -20px rgba(0,0,0,.5);transform:translateY(20px);opacity:0;transition:.3s var(--ease);max-width:380px;pointer-events:none}
+.toast.show{transform:none;opacity:1}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{position:sticky;top:env(safe-area-inset-top,0px);height:auto;z-index:40;flex-direction:row;align-items:center;overflow-x:auto;padding:8px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));border-right:0;border-bottom:1px solid var(--line)}
+  .brand small,.side .foot,.nav .g{display:none}.brand{padding:0}
+  .nav{display:flex}.nav a{white-space:nowrap}
+  .topbar{top:calc(env(safe-area-inset-top,0px) + 56px)}
+  .topbar .in{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .who span{display:none}
+  main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .vhead h1{font-size:32px}.banner h2{font-size:30px}
+  .form .two{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mk"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 30V11l10 10 10-10v19" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><b>MATADOR</b><small>Panel de gerencia</small></div></div>
+    <nav class="nav" id="nav" aria-label="Módulos"></nav>
+    <div class="foot"><span id="todayLbl"></span><button type="button" id="resetData">Restaurar datos de ejemplo</button></div>
+  </aside>
+  <div style="min-width:0">
+    <div class="topbar"><div class="in">
+      <button class="sbtn" type="button" id="openPal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Buscar pedidos, clientes, cortes…<kbd>Ctrl K</kbd></button>
+      <div class="who"><span class="muted">Gerencia · Hacienda El Matador</span><div class="av" style="background:var(--wine)">HM</div></div>
+    </div></div>
+    <main id="main"></main>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Detalle"></aside>
+<div class="ov" id="ov"><div class="box" id="box" role="dialog" aria-modal="true"></div></div>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const money=n=>"$"+Math.round(n).toLocaleString("es-CO");
+const km=n=>Math.abs(n)>=1e9?"$"+Math.round(n/1e6).toLocaleString("es-CO")+" M":Math.abs(n)>=1e6?"$"+(n/1e6).toLocaleString("es-CO",{maximumFractionDigits:1})+" M":money(n);
+const kg=n=>n.toLocaleString("es-CO",{maximumFractionDigits:1});
+const int=n=>Math.round(n).toLocaleString("es-CO");
+const DAY=864e5;
+const T0=(()=>{const d=new Date();d.setHours(0,0,0,0);return d.getTime()})();
+const dlong=t=>new Date(t).toLocaleDateString("es-CO",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+const dmed=t=>new Date(t).toLocaleDateString("es-CO",{day:"numeric",month:"short",year:"2-digit"});
+const dshort=t=>new Date(t).toLocaleDateString("es-CO",{weekday:"short",day:"numeric",month:"short"});
+const MN=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const DN=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+function rng(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return((s>>>0)%1000003)/1000003}}
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+
+/* ---------- Catálogo ---------- */
+const P=[
+ {id:"w-ribeye",line:"wagyu",name:"Ribeye F1",price:185000,unit:"kg",min:8,img:"img/ribeye.jpg",region:"rib",pop:9,m:1},
+ {id:"w-strip",line:"wagyu",name:"Striploin F1",price:165000,unit:"kg",min:8,img:"img/p-striploin.jpg",region:"shortloin",pop:7,m:.85},
+ {id:"w-picana",line:"wagyu",name:"Picaña F1",price:120000,unit:"kg",min:6,img:"img/p-picana.jpg",region:"sirloin",pop:8,m:.7},
+ {id:"w-tomahawk",line:"wagyu",name:"Tomahawk F1",price:175000,unit:"kg",min:5,img:"img/p-tomahawk.jpg",region:"rib",pop:4,m:.95},
+ {id:"w-denver",line:"wagyu",name:"Denver F1",price:98000,unit:"kg",min:5,img:"img/p-denver.jpg",region:"chuck",pop:5,m:.75},
+ {id:"w-burger",line:"wagyu",name:"Hamburguesa F1 (4×150 g)",price:48000,unit:"paq",min:20,img:"img/p-burger.jpg",region:"brisket",pop:7,m:.6},
+ {id:"b-lomo",line:"brahman",name:"Lomo fino",price:78000,unit:"kg",min:10,img:"img/p-lomo.jpg",region:"shortloin",pop:8,m:.25},
+ {id:"b-punta",line:"brahman",name:"Punta de anca",price:62000,unit:"kg",min:15,img:"img/p-punta.jpg",region:"sirloin",pop:10,m:.3},
+ {id:"b-churrasco",line:"brahman",name:"Churrasco",price:58000,unit:"kg",min:12,img:"img/p-churrasco.jpg",region:"shortloin",pop:8,m:.3},
+ {id:"b-costilla",line:"brahman",name:"Costilla",price:34000,unit:"kg",min:10,img:"img/p-costilla.jpg",region:"plate",pop:5,m:.35},
+ {id:"b-sobre",line:"brahman",name:"Sobrebarriga",price:36000,unit:"kg",min:8,img:"img/p-sobre.jpg",region:"flank",pop:5,m:.2},
+ {id:"b-molida",line:"brahman",name:"Carne molida",img:"img/p-molida.jpg",price:28000,unit:"kg",min:15,region:"round",pop:7,m:.15}
+];
+const PX=Object.fromEntries(P.map(p=>[p.id,p]));
+const LINE={wagyu:"F1 Wagyu × Brahman",brahman:"Brahman 100%"};
+const REG={
+ chuck:{n:"Paleta",pts:[[548,232],[615,272],[640,330],[655,400],[658,470],[600,455],[540,440],[490,428],[490,350],[515,280]]},
+ rib:{n:"Costillar",pts:[[615,272],[700,280],[780,288],[832,293],[838,380],[840,490],[760,475],[658,470],[655,400],[640,330]]},
+ shortloin:{n:"Lomo corto",pts:[[832,293],[900,292],[970,292],[980,380],[998,468],[900,490],[840,490],[838,380]]},
+ sirloin:{n:"Solomo y cadera",pts:[[970,292],[1040,288],[1115,285],[1100,340],[1100,420],[1112,470],[998,468],[980,380]]},
+ round:{n:"Pierna",pts:[[1115,285],[1200,295],[1260,330],[1285,400],[1280,480],[1250,540],[1200,555],[1125,555],[1100,540],[1060,520],[1112,470],[1100,420],[1100,340]]},
+ brisket:{n:"Pecho",pts:[[490,428],[540,440],[600,455],[658,470],[660,520],[665,570],[620,575],[580,570],[540,560],[515,530],[500,480]]},
+ plate:{n:"Falda delantera",pts:[[658,470],[760,475],[840,490],[870,545],[895,580],[800,585],[700,585],[665,570],[660,520]]},
+ flank:{n:"Sobrebarriga",pts:[[840,490],[900,490],[998,468],[1112,470],[1060,520],[1000,560],[950,575],[895,580],[870,545]]},
+ shank:{n:"Morcillo",pts:[[1125,555],[1200,555],[1240,590],[1245,640],[1230,690],[1200,700],[1170,680],[1150,630],[1135,590]]}
+};
+const cen=pts=>{let x=0,y=0;pts.forEach(p=>{x+=p[0];y+=p[1]});return [x/pts.length,y/pts.length]};
+
+/* ---------- Rutas y zonas ---------- */
+const ROUTES={
+ R1:{n:"Sur",days:[2,4],veh:"NHR refrigerado · TKM-412",drv:"Carlos Arango",win:"7:00–11:00",col:"var(--sage)"},
+ R2:{n:"Poblado",days:[1,3,5],veh:"Van refrigerada · JLP-098",drv:"Duván Ríos",win:"8:00–12:00",col:"var(--wine)"},
+ R3:{n:"Occidente",days:[2,5],veh:"Van refrigerada · JLP-098",drv:"Duván Ríos",win:"13:00–17:00",col:"var(--sky)"},
+ R4:{n:"Norte",days:[3],veh:"NHR refrigerado · TKM-412",drv:"Carlos Arango",win:"8:00–12:00",col:"var(--gold)"},
+ R5:{n:"Oriente",days:[6],veh:"NHR refrigerado · TKM-412",drv:"Carlos Arango",win:"7:00–13:00",col:"var(--plum)"}
+};
+const ZONES={"El Poblado":["R2",300,262],"Las Palmas":["R2",352,236],"Laureles":["R3",172,200],"Estadio":["R3",150,166],"Belén":["R3",146,268],
+ "Envigado":["R1",304,330],"Sabaneta":["R1",268,378],"Itagüí":["R1",204,340],"La Estrella":["R1",170,384],"Bello":["R4",226,64],"Copacabana":["R4",330,42],"Rionegro":["R5",470,214],"Llanogrande":["R5",452,296]};
+const BASE=[236,256];
+function nextRouteDay(rid,from){for(let i=1;i<=8;i++){const t=from+i*DAY;if(ROUTES[rid].days.includes(new Date(t).getDay()))return t}return from+DAY}
+
+/* ---------- Clientes ---------- */
+const AVC=["#9C3B40","#5F8A6A","#5E82A8","#C49A4A","#7D5A86","#B0703C","#4F7C7A"];
+function genClients(){
+  const r=rng(11),out=[];let n=1;
+  const zn=Object.keys(ZONES),pickZ=name=>zn.find(z=>name.includes(z))||zn[Math.floor(r()*zn.length)];
+  const R=["Bistró La Mesa","Parrilla El Fogón","Burger 70","Hotel Montaña Llanogrande","Asadero Bello Norte","Casa Brasa Provenza","Steakhouse Las Palmas","Cocina de Mar y Tierra","Club Campestre Rionegro","Restaurante Cuarto de Res","Hamburguesería Patio 33","Asados La Fonda Envigado","Bistró Laureles","Gastrobar Manila","Hotel Poblado Plaza","Catering Eventos Sabaneta","Parrilla Don Ramiro Belén","Pizzería Forno Estadio"];
+  const T=["Carnicería Envigado Gourmet","Delicatessen La 10","Mercado Gourmet Llanogrande","Charcutería del Parque Itagüí","Carnes Finas Belén","Tienda Natural Estadio"];
+  const H=["Ana Restrepo","Juan Mejía","Catalina Uribe","Santiago Gómez","Valentina Arango","Mateo Ochoa","Laura Zapata","Andrés Vélez","Daniela Cardona","Felipe Montoya","Camila Jaramillo","Sebastián Henao","Mariana Posada","Tomás Escobar","Isabela Correa","Nicolás Londoño","Paula Villegas","Esteban Salazar"];
+  const mk=(name,type)=>{const z=pickZ(name);const c={id:"C"+String(n++).padStart(3,"0"),name,type,zone:z,route:ZONES[z][0],
+    w:type==="restaurante"?3+r()*6:type==="tienda"?4+r()*5:.5+r()*1.2,wg:type==="hogar"?.25+r()*.4:.3+r()*.5,
+    disc:type==="restaurante"?[5,6,8,10][Math.floor(r()*4)]:type==="tienda"?[10,12][Math.floor(r()*2)]:0,
+    term:type==="hogar"?0:[15,30][Math.floor(r()*2)],since:T0-Math.floor((type==="hogar"?680:720)*r()*(type==="hogar"?1:.75))*DAY-30*DAY,until:null,
+    phone:"3"+String(Math.floor(r()*1e9)).padStart(9,"0").replace(/(\d{2})(\d{3})(\d{4}).*/,"$1 $2 $3"),col:AVC[Math.floor(r()*AVC.length)]};
+    c.since=Math.max(c.since,T0-730*DAY);out.push(c);return c};
+  R.forEach(x=>mk(x,"restaurante"));T.forEach(x=>mk(x,"tienda"));H.forEach(x=>mk(x,"hogar"));
+  // algunos clientes que dejaron de comprar
+  [21,26,30,33,38,7].forEach(i=>{if(out[i])out[i].until=T0-(70+Math.floor(r()*200))*DAY});
+  out[0].since=T0-730*DAY;out[1].since=T0-720*DAY;out[2].since=T0-700*DAY;out[24].since=T0-730*DAY;
+  return out;
+}
+const CL=genClients();const CX=Object.fromEntries(CL.map(c=>[c.id,c]));
+const initials=n=>n.split(/\s+/).filter(w=>/^[A-ZÁÉÍÓÚÑ0-9]/.test(w)).slice(0,2).map(w=>w[0]).join("")||n[0];
+const avatar=(c,s=34)=>`<div class="av" style="background:${c.col};width:${s}px;height:${s}px">${esc(initials(c.name))}</div>`;
+
+/* ---------- Histórico (2 años, determinístico) ---------- */
+function genHistory(){
+  const r=rng(2026),out=[];let id=10001;
+  const byLine={wagyu:P.filter(p=>p.line==="wagyu"),brahman:P.filter(p=>p.line==="brahman")};
+  const pickP=line=>{const ps=byLine[line],tot=ps.reduce((a,p)=>a+p.pop,0);let x=r()*tot;for(const p of ps){x-=p.pop;if(x<=0)return p}return ps[0]};
+  for(let t=T0-730*DAY;t<T0;t+=DAY){
+    const d=new Date(t),dow=d.getDay();if(dow===0)continue;
+    const age=(T0-t)/DAY,grow=3.2+4.6*(1-age/730);
+    const season=[.82,.88,.95,1,1.03,1.12,1.06,1,.97,1.03,1.12,1.5][d.getMonth()];
+    const dowf=[0,.75,1,.9,1.05,1.25,1.35][dow];
+    const n=Math.round(grow*season*dowf*(.7+r()*.6));
+    const act=CL.filter(c=>c.since<=t&&(!c.until||c.until>t));const wt=act.reduce((a,c)=>a+c.w,0);
+    for(let i=0;i<n;i++){
+      let x=r()*wt,c=act[0];for(const cc of act){x-=cc.w;if(x<=0){c=cc;break}}
+      const k=c.type==="hogar"?1+Math.floor(r()*2.5):c.type==="tienda"?3+Math.floor(r()*3):2+Math.floor(r()*3);
+      const it=[],seen={};const infl=1-.12*age/730;
+      for(let j=0;j<k;j++){const p=pickP(r()<c.wg?"wagyu":"brahman");if(seen[p.id])continue;seen[p.id]=1;
+        let q=p.unit==="paq"?(c.type==="hogar"?1+Math.floor(r()*2):4+Math.floor(r()*14)):c.type==="hogar"?Math.round((.5+r()*2.5)*2)/2:c.type==="tienda"?Math.round((4+r()*14)*2)/2:Math.round((2+r()*10)*2)/2;
+        it.push([P.indexOf(p),q,Math.round(p.price*infl/100)*100])}
+      let sub=0,k2=0;it.forEach(([pi,q,pr])=>{sub+=q*pr;if(P[pi].unit==="kg")k2+=q});
+      const tot=sub*(1-c.disc/100);
+      const src=c.type==="hogar"?(r()<.62?"web":"whatsapp"):(r()<.22?"web":r()<.55?"whatsapp":r()<.85?"directo":"recurrente");
+      const paid=age>55?true:c.term?r()>.42:true;
+      out.push({id:"PD-"+(id++),c:c.id,t:t+DAY*(dow===6?2:1),it,tot,kg:k2,paid,src,inv:"FE-"+(30000+id)});
+    }
+  }
+  return out;
+}
+const HIST=genHistory();
+
+/* ---------- Estado mutable ---------- */
+function seedState(){
+  const pick=n=>CL.find(c=>c.name===n).id;
+  const mk=(name,items,st)=>{const c=CX[pick(name)];return {id:"PD-"+(20000+Math.floor(Math.random()*1)+mk.n++),cid:c.id,items,deliver:nextRouteDay(c.route,T0-DAY),route:c.route,status:st,paid:false,inv:st==="confirmado"?null:"FE-4"+mk.n,src:"directo"}};mk.n=1;
+  const active=[
+    mk("Bistró La Mesa",[{pid:"w-ribeye",q:5},{pid:"w-strip",q:4},{pid:"b-lomo",q:3}],"alistamiento"),
+    mk("Parrilla El Fogón",[{pid:"b-punta",q:10},{pid:"b-churrasco",q:8}],"confirmado"),
+    mk("Hotel Montaña Llanogrande",[{pid:"w-tomahawk",q:3},{pid:"w-picana",q:4}],"confirmado"),
+    mk("Carnicería Envigado Gourmet",[{pid:"b-molida",q:12},{pid:"b-costilla",q:8},{pid:"w-burger",q:12}],"enruta"),
+    mk("Ana Restrepo",[{pid:"w-ribeye",q:1},{pid:"b-punta",q:1.5}],"enruta"),
+    mk("Burger 70",[{pid:"w-burger",q:24},{pid:"b-molida",q:8}],"confirmado"),
+    mk("Juan Mejía",[{pid:"w-picana",q:1.5}],"alistamiento"),
+    mk("Asadero Bello Norte",[{pid:"b-punta",q:12},{pid:"b-sobre",q:6}],"confirmado"),
+    mk("Steakhouse Las Palmas",[{pid:"w-ribeye",q:8},{pid:"w-denver",q:5}],"entregado")
+  ];
+  const lead=(name,phone,type,zone)=>({name,phone,type,zone});
+  const quotes=[
+    {id:"COT-3410",lead:lead("Restaurante Brasa Viva","300 555 0201","restaurante","El Poblado"),items:[{pid:"w-ribeye",q:6},{pid:"w-picana",q:4},{pid:"b-lomo",q:5}],date:T0,status:"nueva",src:"web"},
+    {id:"COT-3409",cid:pick("Catalina Uribe"),items:[{pid:"w-tomahawk",q:2},{pid:"w-burger",q:2}],date:T0,status:"nueva",src:"web"},
+    {id:"COT-3408",lead:lead("Evento boda – Sofía M.","301 555 0202","evento","Llanogrande"),items:[{pid:"b-punta",q:18},{pid:"w-strip",q:8},{pid:"b-churrasco",q:10}],date:T0-DAY,status:"enviada",src:"whatsapp"},
+    {id:"COT-3407",cid:pick("Parrilla El Fogón"),items:[{pid:"w-denver",q:8},{pid:"b-costilla",q:10}],date:T0-2*DAY,status:"enviada",src:"directo"},
+    {id:"COT-3406",cid:pick("Juan Mejía"),items:[{pid:"w-ribeye",q:1},{pid:"b-punta",q:1.5}],date:T0-3*DAY,status:"aceptada",src:"web"},
+    {id:"COT-3405",lead:lead("Club Campestre La Ceja","302 555 0203","restaurante","Rionegro"),items:[{pid:"b-lomo",q:15},{pid:"w-ribeye",q:10}],date:T0-9*DAY,status:"vencida",src:"directo"}
+  ];
+  const rec=(name,dow,items,active=true)=>({id:"RC-"+String(rec.n++).padStart(2,"0"),cid:pick(name),dow,items,active,next:nextDow(dow)});rec.n=1;
+  const recurring=[
+    rec("Bistró La Mesa",1,[{pid:"w-ribeye",q:5},{pid:"w-strip",q:4},{pid:"b-lomo",q:3}]),
+    rec("Steakhouse Las Palmas",3,[{pid:"w-ribeye",q:8},{pid:"w-tomahawk",q:3}]),
+    rec("Parrilla El Fogón",5,[{pid:"b-punta",q:10},{pid:"b-churrasco",q:8},{pid:"w-denver",q:3}]),
+    rec("Burger 70",2,[{pid:"w-burger",q:24},{pid:"b-molida",q:8}]),
+    rec("Bistró Laureles",5,[{pid:"w-picana",q:4},{pid:"b-lomo",q:3}]),
+    rec("Carnicería Envigado Gourmet",4,[{pid:"b-molida",q:15},{pid:"b-punta",q:10},{pid:"b-costilla",q:8}]),
+    rec("Hotel Montaña Llanogrande",6,[{pid:"w-tomahawk",q:3},{pid:"w-picana",q:4},{pid:"b-lomo",q:6}],false),
+    rec("Asadero Bello Norte",3,[{pid:"b-punta",q:12},{pid:"b-sobre",q:6}])
+  ];
+  const lots=[
+    {id:"L-2610-09",line:"wagyu",animal:"Novillo F1 #4482",slaughter:T0-27*DAY,carcass:318,aging:21,temp:1.6,y:[34,30,18,18]},
+    {id:"L-2610-07",line:"brahman",animal:"Novillo Brahman #3920",slaughter:T0-18*DAY,carcass:288,aging:14,temp:2.0,y:[24,38,22,16]},
+    {id:"L-2610-05",line:"wagyu",animal:"Novilla F1 #4471",slaughter:T0-12*DAY,carcass:276,aging:21,temp:1.8,y:[36,28,17,19]},
+    {id:"L-2610-03",line:"brahman",animal:"Novillo Brahman #3912",slaughter:T0-6*DAY,carcass:301,aging:14,temp:1.9,y:[25,37,23,15]},
+    {id:"L-2610-01",line:"wagyu",animal:"Novillo F1 #4490",slaughter:T0-2*DAY,carcass:330,aging:21,temp:1.7,y:[35,29,18,18]}
+  ];
+  return {v:2,active,quotes,recurring,lots,done:[],paid:{},qn:3411,on:1,
+    stock:{"w-ribeye":22,"w-strip":18,"w-picana":9,"w-tomahawk":4,"w-denver":11,"w-burger":64,"b-lomo":26,"b-punta":41,"b-churrasco":30,"b-costilla":12,"b-sobre":19,"b-molida":48}};
+}
+function nextDow(d){for(let i=1;i<=7;i++){const t=T0+i*DAY;if(new Date(t).getDay()===d)return t}return T0}
+let S;try{S=JSON.parse(localStorage.getItem("pbm-admin-v2")||"null")}catch(e){S=null}
+if(!S||S.v!==2)S=seedState();
+const save=()=>{try{localStorage.setItem("pbm-admin-v2",JSON.stringify(S))}catch(e){}};
+
+/* ---------- Cálculos ---------- */
+const ALL=()=>HIST.concat(S.done);
+const isPaid=o=>S.paid[o.id]||o.paid;
+const discOf=x=>x.cid?CX[x.cid].disc:(x.lead&&x.lead.type==="restaurante"?5:0);
+const sub=items=>items.reduce((a,i)=>a+PX[i.pid].price*i.q,0);
+const totalOf=x=>sub(x.items)*(1-discOf(x)/100);
+const whoOf=x=>x.cid?CX[x.cid].name:x.lead?x.lead.name:"—";
+const itemsTxt=items=>items.map(i=>`${PX[i.pid].name} ${kg(i.q)} ${PX[i.pid].unit}`).join(" · ");
+const reserved=pid=>S.active.filter(o=>o.status==="confirmado"||o.status==="alistamiento").reduce((a,o)=>a+o.items.filter(i=>i.pid===pid).reduce((b,i)=>b+i.q,0),0);
+const avail=pid=>S.stock[pid]-reserved(pid);
+const shortfall=items=>items.filter(i=>avail(i.pid)<i.q).map(i=>PX[i.pid].name);
+
+let MONTHS=[];
+function buildMonths(){
+  const first=new Date(T0-730*DAY);first.setDate(1);const m=[];
+  for(let d=new Date(first);d.getTime()<=T0;d.setMonth(d.getMonth()+1)){m.push({y:d.getFullYear(),mo:d.getMonth(),start:d.getTime(),wg:0,br:0,n:0,kg:0,ch:{restaurante:0,tienda:0,hogar:0},cut:{},cl:{},newc:0})}
+  const idx=t=>{const d=new Date(t);return (d.getFullYear()-m[0].y)*12+d.getMonth()-m[0].mo};
+  ALL().forEach(o=>{const i=idx(o.t);const M=m[i];if(!M)return;M.n++;M.kg+=o.kg;const c=CX[o.c];M.ch[c.type]+=o.tot;M.cl[o.c]=(M.cl[o.c]||0)+o.tot;
+    const f=1-c.disc/100;o.it.forEach(([pi,q,pr])=>{const v=q*pr*f;P[pi].line==="wagyu"?M.wg+=v:M.br+=v;const cu=M.cut[pi]||(M.cut[pi]={v:0,q:0});cu.v+=v;cu.q+=q})});
+  CL.forEach(c=>{const i=idx(c.since);if(m[i])m[i].newc++});
+  MONTHS=m;
+}
+buildMonths();
+const mlabel=M=>MN[M.mo]+" "+String(M.y).slice(2);
+
+/* ---------- Íconos ---------- */
+const IC={
+ panel:'<path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 7h6V4h-6z"/>',
+ pedidos:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+ cotizaciones:'<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/>',
+ recurrentes:'<path d="M4 12a8 8 0 0 1 14-5l2-2v6h-6l2-2a5 5 0 1 0 1 6"/>',
+ rutas:'<circle cx="6" cy="18" r="2"/><circle cx="18" cy="6" r="2"/><path d="M8 18h7a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h7"/>',
+ historico:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/>',
+ clientes:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+ cortes:'<path d="M4 14c0-5 4-9 9-9 4 0 7 3 7 6s-2 5-5 5H9l-4 4z"/>',
+ inventario:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>',
+ modulos:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/>'
+};
+const ico=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+
+/* ---------- Fotos y marmoleo ---------- */
+function marble(cv,density,seed){
+  const ctx=cv.getContext("2d");if(!ctx)return;const w=cv.width,h=cv.height,r=rng(seed);
+  const g=ctx.createRadialGradient(w*.45,h*.45,4,w/2,h/2,w*.8);g.addColorStop(0,"#AE4045");g.addColorStop(1,"#5E1A1E");
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  for(let v=0;v<Math.round(10+density*60);v++){let x=r()*w,y=r()*h,a=r()*7;ctx.strokeStyle=`rgba(246,232,222,${.5+r()*.45})`;ctx.lineWidth=(.5+r()*(1+density*3))*w/200;ctx.lineCap="round";ctx.beginPath();ctx.moveTo(x,y);
+    for(let s=0;s<20+r()*(40+density*100);s+=4){a+=(r()-.5)*.9;x+=Math.cos(a)*4*w/200;y+=Math.sin(a)*4*w/200;ctx.lineTo(x,y)}ctx.stroke()}
+}
+const thumb=(p,cls="th",w=88,h=88)=>p.img?`<img class="${cls}" src="${p.img}" alt="" loading="lazy">`:`<span class="${cls}"><canvas width="${w}" height="${h}" data-m="${p.m}" data-s="${hash(p.id)}"></canvas></span>`;
+function paint(root){(root||document).querySelectorAll("canvas[data-m]").forEach(c=>{if(!c.dataset.p){marble(c,+c.dataset.m,+c.dataset.s);c.dataset.p=1}})}
+
+/* ---------- Tooltip ---------- */
+const tip=$("#tip");
+function showTip(html,x,y){tip.innerHTML=html;tip.classList.add("show");const w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.min(innerWidth-w-10,Math.max(10,x+14))+"px";tip.style.top=Math.max(10,y-h-12)+"px"}
+const hideTip=()=>tip.classList.remove("show");
+document.addEventListener("pointerover",e=>{const t=e.target.closest("[data-tip]");if(t)showTip(t.dataset.tip,e.clientX,e.clientY)});
+document.addEventListener("pointermove",e=>{const t=e.target.closest("[data-tip]");if(t)showTip(t.dataset.tip,e.clientX,e.clientY)});
+document.addEventListener("pointerout",e=>{if(e.target.closest("[data-tip]"))hideTip()});
+
+/* ---------- Gráficas ---------- */
+function niceMax(v){if(v<=0)return 1;const s=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,1.5,2,2.5,3,4,5,6,8,10])if(m*s>=v)return m*s;return 10*s}
+function spark(vals,col="var(--wine)"){
+  if(vals.length<2)vals=[vals[0]||0,vals[0]||0];const W=160,H=30,mx=Math.max(...vals,1),mn=Math.min(...vals,0);
+  const pts=vals.map((v,i)=>[i*(W/(vals.length-1)),H-3-(H-6)*(v-mn)/((mx-mn)||1)]);
+  const d=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const L=pts[pts.length-1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${d} L${W} ${H} L0 ${H}Z" fill="${col}" opacity=".12"/><path d="${d}" fill="none" stroke="${col}" stroke-width="1.8" vector-effect="non-scaling-stroke"/><circle cx="${L[0]}" cy="${L[1]}" r="2.6" fill="${col}"/></svg>`;
+}
+function areaChart(ms,id){
+  const W=780,H=280,pl=62,pr=16,pt=16,pb=30,n=ms.length;
+  const top=niceMax(Math.max(...ms.map(m=>m.wg+m.br),1));
+  const x=i=>pl+(W-pl-pr)*(n===1?.5:i/(n-1)),y=v=>pt+(H-pt-pb)*(1-v/top);
+  const path=(f0,f1)=>{const a=ms.map((m,i)=>`${i?"L":"M"}${x(i).toFixed(1)} ${y(f1(m)).toFixed(1)}`).join(" ");const b=ms.map((m,i)=>[x(i),y(f0(m))]).reverse().map(p=>`L${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(" ");return a+" "+b+"Z"};
+  const line=f=>ms.map((m,i)=>`${i?"L":"M"}${x(i).toFixed(1)} ${y(f(m)).toFixed(1)}`).join(" ");
+  let g="";for(let k=0;k<=4;k++){const v=top*k/4;g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}"/><text x="${pl-8}" y="${y(v)+3.5}" text-anchor="end">${km(v)}</text>`}
+  const step=Math.max(1,Math.ceil(n/9));
+  const lbl=ms.map((m,i)=>i%step===0||i===n-1?`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${mlabel(m)}</text>`:"").join("");
+  return `<div class="chartbox" id="${id}"><svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Ventas mensuales por línea genética">
+   <defs><linearGradient id="gW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--wine)" stop-opacity=".55"/><stop offset="1" stop-color="var(--wine)" stop-opacity=".18"/></linearGradient>
+   <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--gold)" stop-opacity=".55"/><stop offset="1" stop-color="var(--gold)" stop-opacity=".15"/></linearGradient></defs>
+   ${g}<path d="${path(()=>0,m=>m.br)}" fill="url(#gB)"/><path d="${path(m=>m.br,m=>m.br+m.wg)}" fill="url(#gW)"/>
+   <path d="${line(m=>m.br)}" fill="none" stroke="var(--gold)" stroke-width="2"/><path d="${line(m=>m.br+m.wg)}" fill="none" stroke="var(--wine)" stroke-width="2.4"/>
+   ${lbl}<line class="xh" x1="0" x2="0" y1="${pt}" y2="${H-pb}" stroke="var(--ink-3)" stroke-dasharray="3 3" opacity="0"/>
+   <circle class="xd" r="5" fill="var(--wine)" stroke="var(--surface)" stroke-width="2" opacity="0"/>
+   <rect x="${pl}" y="${pt}" width="${W-pl-pr}" height="${H-pt-pb}" fill="transparent" class="hov"/></svg></div>`;
+}
+function wireArea(id,ms){
+  const box=document.getElementById(id);if(!box)return;const svg=box.querySelector("svg"),W=780,pl=62,pr=16,H=280,pt=16,pb=30,n=ms.length;
+  const top=niceMax(Math.max(...ms.map(m=>m.wg+m.br),1));
+  svg.querySelector(".hov").addEventListener("pointermove",e=>{
+    const b=svg.getBoundingClientRect(),sx=(e.clientX-b.left)*W/b.width;const i=Math.max(0,Math.min(n-1,Math.round((sx-pl)/((W-pl-pr)/Math.max(1,n-1)))));
+    const m=ms[i],X=pl+(W-pl-pr)*(n===1?.5:i/(n-1)),Y=pt+(H-pt-pb)*(1-(m.wg+m.br)/top);
+    const xh=svg.querySelector(".xh"),xd=svg.querySelector(".xd");xh.setAttribute("x1",X);xh.setAttribute("x2",X);xh.setAttribute("opacity",1);xd.setAttribute("cx",X);xd.setAttribute("cy",Y);xd.setAttribute("opacity",1);
+    showTip(`<b>${MN[m.mo]} ${m.y}</b><div class="r"><span>Total</span><span>${km(m.wg+m.br)}</span></div><div class="r"><span>F1 Wagyu</span><span>${km(m.wg)}</span></div><div class="r"><span>Brahman</span><span>${km(m.br)}</span></div><div class="r"><span>Pedidos</span><span>${int(m.n)}</span></div><div class="r"><span>Kilos</span><span>${kg(m.kg)}</span></div>`,e.clientX,e.clientY)});
+  svg.querySelector(".hov").addEventListener("pointerleave",()=>{hideTip();svg.querySelector(".xh").setAttribute("opacity",0);svg.querySelector(".xd").setAttribute("opacity",0)});
+}
+function donut(parts,id){
+  const tot=parts.reduce((a,p)=>a+p.v,0)||1,R=80,r=52,cx=100,cy=100;let a0=-Math.PI/2;
+  const arcs=parts.map((p,i)=>{const a1=a0+2*Math.PI*p.v/tot;const L=a1-a0>Math.PI?1:0;
+    const P1=[cx+R*Math.cos(a0),cy+R*Math.sin(a0)],P2=[cx+R*Math.cos(a1),cy+R*Math.sin(a1)],P3=[cx+r*Math.cos(a1),cy+r*Math.sin(a1)],P4=[cx+r*Math.cos(a0),cy+r*Math.sin(a0)];
+    const mid=(a0+a1)/2;const d=`M${P1} A${R} ${R} 0 ${L} 1 ${P2} L${P3} A${r} ${r} 0 ${L} 0 ${P4}Z`;a0=a1;
+    return `<path d="${d}" fill="${p.col}" data-i="${i}" data-dx="${(Math.cos(mid)*6).toFixed(1)}" data-dy="${(Math.sin(mid)*6).toFixed(1)}" data-tip="<b>${p.l}</b>${km(p.v)} · ${(p.v/tot*100).toFixed(1)}%"></path>`}).join("");
+  return `<div id="${id}" style="display:grid;grid-template-columns:minmax(140px,190px) 1fr;gap:14px;align-items:center">
+    <svg viewBox="0 0 200 200" class="donut" role="img" aria-label="Participación por canal">${arcs}<text x="100" y="96" text-anchor="middle" style="font-family:var(--font-mono);font-size:17px;fill:var(--ink)">${km(tot)}</text><text x="100" y="116" text-anchor="middle" style="font-size:11px;fill:var(--ink-3);font-weight:700">TOTAL</text></svg>
+    <div class="dleg">${parts.map((p,i)=>`<button type="button" data-i="${i}"><i style="background:${p.col}"></i><span>${p.l}</span><b class="num">${(p.v/tot*100).toFixed(0)}%</b></button>`).join("")}</div></div>`;
+}
+function wireDonut(id){const box=document.getElementById(id);if(!box)return;
+  const hl=i=>box.querySelectorAll("path").forEach(p=>{const on=i===null||+p.dataset.i===i;p.classList.toggle("dim",!on);p.style.transform=i!==null&&+p.dataset.i===i?`translate(${p.dataset.dx}px,${p.dataset.dy}px)`:""});
+  box.querySelectorAll("[data-i]").forEach(el=>{el.addEventListener("pointerenter",()=>hl(+el.dataset.i));el.addEventListener("pointerleave",()=>hl(null));el.addEventListener("focus",()=>hl(+el.dataset.i));el.addEventListener("blur",()=>hl(null))})}
+function heatmap(weeks){
+  const end=T0,start=end-weeks*7*DAY;const cnt={};let mx=1;
+  ALL().forEach(o=>{if(o.t>=start&&o.t<end){const k=Math.floor((o.t-start)/DAY);cnt[k]=(cnt[k]||0)+o.tot;mx=Math.max(mx,cnt[k])}});
+  const s0=new Date(start).getDay();
+  const rows=[1,2,3,4,5,6].map(dw=>{let cells="";for(let w=0;w<weeks;w++){const k=w*7+((dw-s0+7)%7);const t=start+k*DAY;const v=cnt[k]||0;
+    const a=v?(.12+.88*Math.pow(v/mx,.8)):0;cells+=`<i style="${v?`background:color-mix(in srgb,var(--wine) ${Math.round(a*100)}%,var(--sunk))`:""}" data-tip="<b>${dlong(t)}</b>${v?km(v):"Sin entregas"}"></i>`}
+    return `<div class="row"><span>${DN[dw]}</span>${cells}</div>`}).join("");
+  return `<div class="hm" style="--cols:${weeks}">${rows}</div>`;
+}
+
+/* ---------- Rango del panel ---------- */
+let RANGE=[MONTHS.length-12,MONTHS.length-1];
+const inRange=()=>MONTHS.slice(RANGE[0],RANGE[1]+1);
+function prevRange(){const len=RANGE[1]-RANGE[0]+1,a=RANGE[0]-len;return a<0?null:MONTHS.slice(a,RANGE[0])}
+function sumM(ms){const s={v:0,n:0,kg:0,wg:0,br:0,newc:0,ch:{restaurante:0,tienda:0,hogar:0},cut:{},cl:{}};
+  ms.forEach(m=>{s.v+=m.wg+m.br;s.n+=m.n;s.kg+=m.kg;s.wg+=m.wg;s.br+=m.br;s.newc+=m.newc;for(const k in m.ch)s.ch[k]+=m.ch[k];
+    for(const k in m.cut){const c=s.cut[k]||(s.cut[k]={v:0,q:0});c.v+=m.cut[k].v;c.q+=m.cut[k].q}for(const k in m.cl)s.cl[k]=(s.cl[k]||0)+m.cl[k]});return s}
+function brush(){
+  const W=780,H=58,n=MONTHS.length,mx=Math.max(...MONTHS.map(m=>m.wg+m.br)),bw=W/n;
+  const bars=MONTHS.map((m,i)=>{const h=(H-14)*(m.wg+m.br)/mx;const on=i>=RANGE[0]&&i<=RANGE[1];return `<rect x="${i*bw+1.5}" y="${H-12-h}" width="${bw-3}" height="${h}" rx="2" fill="${on?"var(--wine)":"var(--line)"}"/>`}).join("");
+  const lab=MONTHS.map((m,i)=>m.mo===0||i===0?`<text x="${i*bw+2}" y="${H-1}" style="font-size:9.5px">${m.y}</text>`:"").join("");
+  return `<div class="brush" id="brush" title="Arrastra para elegir el periodo"><svg class="ch" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${bars}
+   <rect x="${RANGE[0]*bw}" y="0" width="${(RANGE[1]-RANGE[0]+1)*bw}" height="${H-12}" fill="var(--wine)" opacity=".08" stroke="var(--wine)" stroke-width="1.5" rx="4" id="brSel"/>${lab}</svg></div>`;
+}
+function wireBrush(){
+  const el=$("#brush");if(!el)return;const n=MONTHS.length;let a=null;
+  const idx=e=>{const b=el.getBoundingClientRect();return Math.max(0,Math.min(n-1,Math.floor((e.clientX-b.left)/b.width*n)))};
+  const upd=(i0,i1)=>{const s=$("#brSel"),bw=780/n;s.setAttribute("x",Math.min(i0,i1)*bw);s.setAttribute("width",(Math.abs(i1-i0)+1)*bw)};
+  el.addEventListener("pointerdown",e=>{a=idx(e);el.setPointerCapture(e.pointerId);upd(a,a)});
+  el.addEventListener("pointermove",e=>{if(a!==null)upd(a,idx(e))});
+  el.addEventListener("pointerup",e=>{if(a===null)return;const b=idx(e);RANGE=[Math.min(a,b),Math.max(a,b)];if(RANGE[1]-RANGE[0]<1)RANGE[0]=Math.max(0,RANGE[1]-1);a=null;render()});
+}
+
+/* ---------- Animación de cifras ---------- */
+function countUp(root){if(RM)return;root.querySelectorAll("[data-count]").forEach(el=>{const v=+el.dataset.count,f=el.dataset.fmt;const t0=performance.now();
+  const step=t=>{const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3),x=v*e;el.textContent=f==="m"?km(x):f==="kg"?kg(x)+" kg":f==="pct"?x.toFixed(0)+"%":int(x);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
+
+/* ---------- Navegación ---------- */
+const NAV=[["g","Operación"],["panel","Panel"],["pedidos","Pedidos en curso"],["cotizaciones","Cotizaciones"],["recurrentes","Recurrentes"],["rutas","Rutas"],
+ ["g","Datos"],["historico","Histórico"],["clientes","Clientes"],["cortes","Cortes y zonas"],["g","Planta"],["inventario","Inventario y lotes"],["g","Proyecto"],["modulos","Módulos del sistema"]];
+const LBL=Object.fromEntries(NAV.filter(n=>n[0]!=="g"));
+function badge(k){if(k==="cotizaciones")return S.quotes.filter(q=>q.status==="nueva").length;if(k==="pedidos")return S.active.length;if(k==="inventario")return P.filter(p=>avail(p.id)<p.min).length;return 0}
+function renderNav(cur){$("#nav").innerHTML=NAV.map(([k,l])=>k==="g"?`<span class="g">${l}</span>`:`<a href="#${k}" ${k===cur?'aria-current="page"':""}>${ico(k)}${l}${badge(k)?`<span class="b">${badge(k)}</span>`:""}</a>`).join("")}
+$("#todayLbl").textContent="Hoy · "+dlong(T0);
+const V={},AFTER={};
+function render(){const k=(location.hash||"#panel").slice(1);const key=V[k]?k:"panel";renderNav(key);$("#main").innerHTML=V[key]();paint($("#main"));(AFTER[key]||(()=>{}))();countUp($("#main"))}
+addEventListener("hashchange",()=>{render();scrollTo(0,0)});
+const head=(eb,t,acts="")=>`<div class="vhead"><div><p class="eyebrow">${eb}</p><h1>${t}</h1></div><div class="acts">${acts}</div></div>`;
+const banner=(img,h,p,chips="",pos="center")=>`<section class="banner"><img src="${img}" alt="" style="object-position:${pos}"><div class="in"><h2>${h}</h2><p>${p}</p>${chips?`<div class="chips">${chips}</div>`:""}</div></section>`;
+
+/* ---------- PANEL ---------- */
+V.panel=()=>{
+  const ms=inRange(),s=sumM(ms),pv=prevRange(),ps=pv?sumM(pv):null;
+  const dl=(a,b)=>b?`<span class="d ${a>=b?"up":"down"}">${a>=b?"▲":"▼"} ${Math.abs((a-b)/b*100).toFixed(1)}% vs. periodo anterior</span>`:`<span class="d faint">Sin periodo previo</span>`;
+  const low=P.filter(p=>avail(p.id)<p.min).length,nq=S.quotes.filter(q=>q.status==="nueva").length;
+  const tomorrow=S.active.filter(o=>o.deliver<=T0+DAY&&o.status!=="entregado").length;
+  const over=ALL().filter(o=>!isPaid(o)&&T0-o.t>CX[o.c].term*DAY+DAY);
+  const h=new Date().getHours(),greet=h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches";
+  const cuts=Object.entries(s.cut).sort((a,b)=>b[1].v-a[1].v).slice(0,6),cmax=cuts.length?cuts[0][1].v:1;
+  const per=ms.length+" meses · "+mlabel(ms[0])+" – "+mlabel(ms[ms.length-1]);
+  // insights
+  const byDow=[0,0,0,0,0,0,0];ALL().forEach(o=>{if(o.t>=ms[0].start)byDow[new Date(o.t).getDay()]+=o.tot});const bd=byDow.indexOf(Math.max(...byDow));
+  const pk=ms.reduce((a,m)=>(m.wg+m.br)>(a.wg+a.br)?m:a,ms[0]);
+  const tc=Object.entries(s.cl).sort((a,b)=>b[1]-a[1])[0];
+  return banner("img/hero.jpg",`${greet}, gerencia`,`Así va el negocio. Tienes ${S.active.length} pedidos en curso y ${HIST.length.toLocaleString("es-CO")} pedidos históricos analizados en este panel.`,
+   `<a class="chip" href="#rutas">🚚 Entregas hoy y mañana <b>${tomorrow}</b></a><a class="chip" href="#cotizaciones">Cotizaciones nuevas <b>${nq}</b></a><a class="chip" href="#inventario">Cortes bajo mínimo <b>${low}</b></a><a class="chip" href="#clientes">Facturas vencidas <b>${over.length}</b></a>`,"right center")+
+  `<section class="card" style="margin-bottom:16px"><header><h3>Periodo de análisis <span class="faint" style="font-weight:600">· ${per}</span></h3>
+   <div class="seg" role="group" aria-label="Periodo">${[3,6,12,24].map(n=>`<button type="button" data-act="rng" data-v="${n}" aria-pressed="${RANGE[1]===MONTHS.length-1&&RANGE[1]-RANGE[0]+1===n}">${n} meses</button>`).join("")}</div></header>
+   <div class="pb">${brush()}<p class="faint" style="font-size:12px;margin-top:6px">Arrastra sobre las barras para elegir cualquier periodo de los últimos dos años.</p></div></section>
+  <div class="kpis">
+   <div class="card kpi"><span class="l">Ventas</span><span class="v" data-count="${s.v}" data-fmt="m">${km(s.v)}</span>${dl(s.v,ps&&ps.v)}${spark(ms.map(m=>m.wg+m.br))}</div>
+   <div class="card kpi"><span class="l">Pedidos entregados</span><span class="v" data-count="${s.n}">${int(s.n)}</span>${dl(s.n,ps&&ps.n)}${spark(ms.map(m=>m.n),"var(--sky)")}</div>
+   <div class="card kpi"><span class="l">Kilos despachados</span><span class="v" data-count="${s.kg}" data-fmt="kg">${kg(s.kg)} kg</span>${dl(s.kg,ps&&ps.kg)}${spark(ms.map(m=>m.kg),"var(--sage)")}</div>
+   <div class="card kpi"><span class="l">Ticket promedio</span><span class="v">${km(s.v/Math.max(1,s.n))}</span>${dl(s.v/Math.max(1,s.n),ps&&ps.v/Math.max(1,ps.n))}${spark(ms.map(m=>(m.wg+m.br)/Math.max(1,m.n)),"var(--gold)")}</div>
+   <div class="card kpi"><span class="l">Participación F1 Wagyu</span><span class="v" data-count="${s.wg/Math.max(1,s.v)*100}" data-fmt="pct">${(s.wg/Math.max(1,s.v)*100).toFixed(0)}%</span><span class="d faint">${int(s.newc)} clientes nuevos</span>${spark(ms.map(m=>m.wg/Math.max(1,m.wg+m.br)),"var(--plum)")}</div>
+  </div>
+  <div class="grid2" style="margin-bottom:16px">
+   <section class="card"><header><h3>Ventas mensuales por línea</h3><div class="legend"><span><i style="background:var(--wine)"></i>F1 Wagyu × Brahman</span><span><i style="background:var(--gold)"></i>Brahman 100%</span></div></header><div class="pb">${areaChart(ms,"area1")}</div></section>
+   <section class="card"><header><h3>Ventas por canal</h3></header><div class="pb">${donut([{l:"Restaurantes",v:s.ch.restaurante,col:"var(--wine)"},{l:"Tiendas y carnicerías",v:s.ch.tienda,col:"var(--gold)"},{l:"Hogares",v:s.ch.hogar,col:"var(--sage)"}],"don1")}
+     <div class="insights" style="grid-template-columns:1fr"><div class="ins"><b>${tc?esc(CX[tc[0]].name):"—"}</b><span>Mejor cliente del periodo · ${tc?km(tc[1]):""}</span></div></div></div></section>
+  </div>
+  <div class="grid2e" style="margin-bottom:16px">
+   <section class="card"><header><h3>Cortes más vendidos</h3><a class="btn sm" href="#cortes">Ver análisis</a></header><div class="pb bars">
+    ${cuts.map(([pi,c])=>{const p=P[pi];return `<div class="barrow" data-act="cut" data-id="${p.id}">${thumb(p)}<div><div class="nm"><span>${p.name}</span><span class="num">${km(c.v)}</span></div><div class="track"><i style="width:${c.v/cmax*100}%"></i></div></div><span class="tag ${p.line}">${p.line==="wagyu"?"F1":"Brahman"}</span></div>`}).join("")}</div></section>
+   <section class="card"><header><h3>¿De qué zona del animal vendemos más?</h3></header><div class="pb">${cowHeat(s,"cow1")}</div></section>
+  </div>
+  <section class="card"><header><h3>Calendario de entregas · últimas 26 semanas</h3><div class="legend"><span>Menos</span>${[15,35,60,85,100].map(a=>`<i style="background:color-mix(in srgb,var(--wine) ${a}%,var(--sunk));margin:0"></i>`).join("")}<span>Más</span></div></header>
+   <div class="pb" style="overflow-x:auto"><div style="min-width:560px">${heatmap(26)}</div>
+   <div class="insights"><div class="ins"><b>${["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"][bd]}</b><span>Día de mayor venta en el periodo</span></div>
+    <div class="ins"><b>${MN[pk.mo]} ${pk.y}</b><span>Mes pico · ${km(pk.wg+pk.br)}</span></div>
+    <div class="ins"><b>${km(s.v/Math.max(1,ms.length))}</b><span>Venta mensual promedio</span></div></div></div></section>`;
+};
+AFTER.panel=()=>{wireArea("area1",inRange());wireDonut("don1");wireBrush();wireCow("cow1")};
+
+function cowHeat(s,id,metric="v"){
+  const z={};Object.keys(REG).forEach(k=>z[k]=0);for(const pi in s.cut)z[P[pi].region]+=metric==="v"?s.cut[pi].v:(P[pi].unit==="kg"?s.cut[pi].q:s.cut[pi].q*.6);
+  const tot=Object.values(z).reduce((a,b)=>a+b,0)||1,mx=Math.max(...Object.values(z),1);
+  const polys=Object.entries(REG).map(([k,r])=>{const a=z[k]/mx;const [cx,cy]=cen(r.pts);const pct=z[k]/tot*100;
+    return `<polygon points="${r.pts.map(p=>p.join(",")).join(" ")}" data-z="${k}" fill="rgba(160,44,52,${(.12+.72*a).toFixed(2)})" data-tip="<b>${r.n}</b>${metric==="v"?km(z[k]):kg(z[k])+" kg"} · ${pct.toFixed(1)}%"></polygon>
+    ${pct>0?`<g class="lb"><rect x="${cx-46}" y="${cy-20}" width="92" height="38" rx="19"/><text x="${cx}" y="${cy+9}" text-anchor="middle">${pct.toFixed(0)}%</text></g>`:""}`}).join("");
+  return `<div class="cow" id="${id}"><img src="img/cortes.jpg" alt="Infografía de zonas de corte de la res" loading="lazy"><svg viewBox="0 0 1672 941">${polys}</svg></div>`;
+}
+function wireCow(id){const el=document.getElementById(id);if(!el)return;el.querySelectorAll("polygon").forEach(p=>p.addEventListener("click",()=>{location.hash="cortes";zoneSel=p.dataset.z}))}
+
+/* ---------- CORTES ---------- */
+let zoneSel=null,cutMetric="v";
+V.cortes=()=>{
+  const ms=inRange(),s=sumM(ms);
+  const rows=P.map((p,pi)=>{const c=s.cut[pi]||{v:0,q:0};const tr=ms.map(m=>(m.cut[pi]||{v:0}).v);return {p,pi,c,tr}}).filter(r=>!zoneSel||r.p.region===zoneSel).sort((a,b)=>b.c.v-a.c.v);
+  const tot=Object.values(s.cut).reduce((a,c)=>a+c.v,0)||1;
+  return head(`Periodo · ${mlabel(ms[0])} – ${mlabel(ms[ms.length-1])}`,"Cortes y zonas",`<div class="seg">${[["v","Por ventas"],["q","Por kilos"]].map(([k,l])=>`<button type="button" data-act="cm" data-v="${k}" aria-pressed="${cutMetric===k}">${l}</button>`).join("")}</div><a class="btn" href="#panel">Cambiar periodo</a>`)+
+  `<div class="grid2" style="margin-bottom:16px"><section class="card"><header><h3>Mapa de calor por zona anatómica</h3>${zoneSel?`<button class="btn sm" data-act="zclr">Ver todas las zonas</button>`:""}</header><div class="pb">${cowHeat(s,"cow2",cutMetric)}
+   <p class="faint" style="font-size:12px;margin-top:8px">Toca una zona para filtrar la tabla. La intensidad del color es proporcional a ${cutMetric==="v"?"las ventas":"los kilos"} del periodo.</p></div></section>
+   <section class="card"><header><h3>Ranking de zonas</h3></header><div class="pb bars">${Object.entries(REG).map(([k,r])=>{let v=0;P.forEach((p,pi)=>{if(p.region===k&&s.cut[pi])v+=cutMetric==="v"?s.cut[pi].v:s.cut[pi].q});return [k,r,v]}).sort((a,b)=>b[2]-a[2]).map(([k,r,v],i,arr)=>
+     `<div class="barrow" style="grid-template-columns:28px 1fr auto" data-act="zsel" data-id="${k}"><span class="num faint">${i+1}</span><div><div class="nm"><span>${r.n}</span><span class="num">${cutMetric==="v"?km(v):kg(v)+" kg"}</span></div><div class="track"><i style="width:${arr[0][2]?v/arr[0][2]*100:0}%"></i></div></div>${zoneSel===k?'<span class="pill p-gold">Filtro</span>':'<span></span>'}</div>`).join("")}</div></section></div>
+  <section class="card"><header><h3>${zoneSel?REG[zoneSel].n+" · ":""}Detalle por corte</h3></header><div class="tbl"><table><thead><tr><th>Corte</th><th>Línea</th><th>Zona</th><th class="r">Kilos / und.</th><th class="r">Ventas</th><th class="r">Participación</th><th style="width:170px">Tendencia</th></tr></thead><tbody>
+   ${rows.map(r=>`<tr data-act="cut" data-id="${r.p.id}"><td><div class="cl">${thumb(r.p)}<b>${r.p.name}</b></div></td><td><span class="tag ${r.p.line}">${LINE[r.p.line]}</span></td><td>${REG[r.p.region].n}</td>
+    <td class="r num">${kg(r.c.q)} ${r.p.unit}</td><td class="r num">${km(r.c.v)}</td><td class="r num">${(r.c.v/tot*100).toFixed(1)}%</td><td>${spark(r.tr,r.p.line==="wagyu"?"var(--wine)":"var(--gold)")}</td></tr>`).join("")||`<tr><td colspan="7" class="empty">Sin cortes en esta zona.</td></tr>`}
+  </tbody></table></div></section>`;
+};
+AFTER.cortes=()=>{const el=$("#cow2");if(el){el.querySelectorAll("polygon").forEach(p=>{p.classList.toggle("on",p.dataset.z===zoneSel);p.addEventListener("click",()=>{zoneSel=zoneSel===p.dataset.z?null:p.dataset.z;render()})})}};
+
+/* ---------- HISTÓRICO ---------- */
+const HF={q:"",from:0,to:null,line:"",type:"",route:"",pay:"",sort:"t",dir:-1,page:0};
+function histFiltered(){
+  const q=HF.q.trim().toLowerCase(),from=MONTHS[HF.from].start,to=HF.to===null?T0+DAY:(MONTHS[HF.to+1]?MONTHS[HF.to+1].start:T0+DAY);
+  let L=ALL().filter(o=>{if(o.t<from||o.t>=to)return false;const c=CX[o.c];
+    if(HF.type&&c.type!==HF.type)return false;if(HF.route&&c.route!==HF.route)return false;
+    if(HF.pay==="pend"&&isPaid(o))return false;if(HF.pay==="ok"&&!isPaid(o))return false;
+    if(HF.line&&!o.it.some(i=>P[i[0]].line===HF.line))return false;
+    if(q&&!(o.id.toLowerCase().includes(q)||c.name.toLowerCase().includes(q)||o.it.some(i=>P[i[0]].name.toLowerCase().includes(q))))return false;return true});
+  const k=HF.sort,d=HF.dir;L.sort((a,b)=>k==="c"?CX[a.c].name.localeCompare(CX[b.c].name)*d:(a[k]-b[k])*d);return L;
+}
+V.historico=()=>{
+  const L=histFiltered(),PG=50,pages=Math.max(1,Math.ceil(L.length/PG));HF.page=Math.min(HF.page,pages-1);
+  const rows=L.slice(HF.page*PG,HF.page*PG+PG);const tot=L.reduce((a,o)=>a+o.tot,0),kgs=L.reduce((a,o)=>a+o.kg,0),pend=L.filter(o=>!isPaid(o)).reduce((a,o)=>a+o.tot,0);
+  const mopts=(sel,isTo)=>MONTHS.map((m,i)=>`<option value="${i}" ${i===sel?"selected":""}>${MN[m.mo]} ${m.y}</option>`).join("");
+  const sb=(k,l)=>`<button type="button" data-act="hsort" data-v="${k}" ${HF.sort===k?`data-dir="${HF.dir>0?"↑":"↓"}"`:""}>${l}</button>`;
+  // minigráfica de lo filtrado
+  const bym={};L.forEach(o=>{const d=new Date(o.t),k=d.getFullYear()*12+d.getMonth();bym[k]=(bym[k]||0)+o.tot});
+  const ks=Object.keys(bym).map(Number).sort((a,b)=>a-b);const mx=Math.max(...Object.values(bym),1);
+  const mini=ks.length?`<svg class="ch" viewBox="0 0 ${ks.length*14} 40" preserveAspectRatio="none" style="height:40px;width:100%;max-width:${Math.max(120,ks.length*14)}px">${ks.map((k,i)=>`<rect x="${i*14+2}" y="${40-36*bym[k]/mx}" width="10" height="${36*bym[k]/mx}" rx="2" fill="var(--wine)" opacity=".75" data-tip="<b>${MN[k%12]} ${Math.floor(k/12)}</b>${km(bym[k])}"/>`).join("")}</svg>`:"";
+  return head(`${ALL().length.toLocaleString("es-CO")} pedidos desde ${MN[MONTHS[0].mo]} ${MONTHS[0].y}`,"Histórico de pedidos",`<button class="btn" data-act="csv">Copiar CSV</button>`)+
+  `<section class="card"><div class="filters">
+    <input class="inp search" id="hq" type="search" placeholder="Buscar pedido, cliente o corte" value="${esc(HF.q)}" aria-label="Buscar">
+    <label class="faint" style="font-size:12px">Desde <select class="inp" id="hfrom">${mopts(HF.from)}</select></label>
+    <label class="faint" style="font-size:12px">Hasta <select class="inp" id="hto">${MONTHS.map((m,i)=>`<option value="${i}" ${(HF.to===null?MONTHS.length-1:HF.to)===i?"selected":""}>${MN[m.mo]} ${m.y}</option>`).join("")}</select></label>
+    <select class="inp" id="hline" aria-label="Línea"><option value="">Todas las líneas</option><option value="wagyu" ${HF.line==="wagyu"?"selected":""}>Con F1 Wagyu</option><option value="brahman" ${HF.line==="brahman"?"selected":""}>Con Brahman</option></select>
+    <select class="inp" id="htype" aria-label="Canal"><option value="">Todos los canales</option>${["restaurante","tienda","hogar"].map(t=>`<option value="${t}" ${HF.type===t?"selected":""}>${t[0].toUpperCase()+t.slice(1)}</option>`).join("")}</select>
+    <select class="inp" id="hroute" aria-label="Ruta"><option value="">Todas las rutas</option>${Object.entries(ROUTES).map(([k,r])=>`<option value="${k}" ${HF.route===k?"selected":""}>${r.n}</option>`).join("")}</select>
+    <select class="inp" id="hpay" aria-label="Pago"><option value="">Pagado y pendiente</option><option value="pend" ${HF.pay==="pend"?"selected":""}>Solo pendientes</option><option value="ok" ${HF.pay==="ok"?"selected":""}>Solo pagados</option></select>
+    <button class="btn sm" data-act="hreset">Limpiar</button></div>
+   <div class="sumbar"><span><b>${int(L.length)}</b> pedidos</span><span>Ventas <b>${km(tot)}</b></span><span>Kilos <b>${kg(kgs)}</b></span><span>Ticket <b>${km(tot/Math.max(1,L.length))}</b></span><span>Por cobrar <b style="color:var(--bad)">${km(pend)}</b></span><span style="flex:1;min-width:120px;display:flex;justify-content:flex-end">${mini}</span></div>
+   <div class="tbl"><table><thead><tr><th>${sb("t","Fecha")}</th><th>Pedido</th><th>${sb("c","Cliente")}</th><th>Cortes</th><th>Ruta</th><th>Origen</th><th class="r">${sb("kg","Kilos")}</th><th class="r">${sb("tot","Total")}</th><th>Pago</th></tr></thead><tbody>
+   ${rows.map(o=>{const c=CX[o.c];return `<tr data-act="order" data-id="${o.id}"><td class="num">${dmed(o.t)}</td><td class="num">${o.id}</td><td><div class="cl">${avatar(c,30)}<div style="min-width:0"><b>${esc(c.name)}</b><small>${c.type} · ${c.zone}</small></div></div></td>
+     <td><div class="thumbs">${o.it.slice(0,4).map(i=>thumb(P[i[0]],"th",52,52)).join("")}</div></td><td>${ROUTES[c.route].n}</td><td><span class="tag">${o.src}</span></td>
+     <td class="r num">${kg(o.kg)}</td><td class="r num">${money(o.tot)}</td><td>${isPaid(o)?'<span class="pill p-ok">Pagado</span>':'<span class="pill p-warn">Pendiente</span>'}</td></tr>`}).join("")||`<tr><td colspan="9" class="empty">Ningún pedido coincide con los filtros.</td></tr>`}
+   </tbody></table></div>
+   <div class="pager"><span>Mostrando ${L.length?HF.page*PG+1:0}–${Math.min(L.length,(HF.page+1)*PG)} de ${int(L.length)}</span>
+    <div class="acts"><button class="btn sm" data-act="pg" data-v="0" ${HF.page===0?"disabled":""}>« Primera</button><button class="btn sm" data-act="pg" data-v="${HF.page-1}" ${HF.page===0?"disabled":""}>‹ Anterior</button>
+    <span class="num">Página ${HF.page+1} de ${pages}</span><button class="btn sm" data-act="pg" data-v="${HF.page+1}" ${HF.page>=pages-1?"disabled":""}>Siguiente ›</button><button class="btn sm" data-act="pg" data-v="${pages-1}" ${HF.page>=pages-1?"disabled":""}>Última »</button></div></div></section>`;
+};
+AFTER.historico=()=>{
+  let tm;$("#hq").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{HF.q=e.target.value;HF.page=0;const pos=e.target.selectionStart;render();const i=$("#hq");i.focus();i.setSelectionRange(pos,pos)},220)});
+  [["hfrom","from"],["hto","to"],["hline","line"],["htype","type"],["hroute","route"],["hpay","pay"]].forEach(([id,k])=>$("#"+id).addEventListener("change",e=>{const v=e.target.value;HF[k]=k==="from"||k==="to"?+v:v;if(HF.to!==null&&HF.from>HF.to){HF.to=HF.from}HF.page=0;render()}));
+};
+
+/* ---------- CLIENTES ---------- */
+const CF={q:"",seg:"",sort:"v"};
+function clientStats(){
+  const st={};CL.forEach(c=>st[c.id]={v:0,n:0,last:0,bal:0,over:false,m:new Array(12).fill(0),cut:{}});
+  const m0=T0-365*DAY;
+  ALL().forEach(o=>{const s=st[o.c];s.v+=o.tot;s.n++;s.last=Math.max(s.last,o.t);if(!isPaid(o)){s.bal+=o.tot;if(T0-o.t>CX[o.c].term*DAY+DAY)s.over=true}
+    if(o.t>=m0){const k=Math.min(11,Math.floor((o.t-m0)/(365*DAY/12)));s.m[k]+=o.tot}o.it.forEach(([pi,q])=>s.cut[pi]=(s.cut[pi]||0)+q)});
+  const vs=Object.values(st).map(s=>s.v).sort((a,b)=>b-a),vip=vs[Math.floor(vs.length*.12)]||0;
+  CL.forEach(c=>{const s=st[c.id],rec=(T0-s.last)/DAY;s.seg=s.v>=vip?"vip":rec<=21?"activo":rec<=75?"riesgo":"inactivo"});return st;
+}
+const SEG={vip:["VIP","p-gold"],activo:["Activo","p-ok"],riesgo:["En riesgo","p-warn"],inactivo:["Inactivo","p-mute"]};
+V.clientes=()=>{
+  const st=clientStats();
+  let L=CL.filter(c=>(!CF.seg||st[c.id].seg===CF.seg)&&(!CF.q||c.name.toLowerCase().includes(CF.q.toLowerCase())));
+  L.sort((a,b)=>CF.sort==="v"?st[b.id].v-st[a.id].v:CF.sort==="bal"?st[b.id].bal-st[a.id].bal:st[b.id].last-st[a.id].last);
+  const cnt=k=>CL.filter(c=>st[c.id].seg===k).length;const bal=CL.reduce((a,c)=>a+st[c.id].bal,0),ov=CL.filter(c=>st[c.id].over).length;
+  return banner("img/chef.jpg","Clientes y cartera",`${CL.length} clientes · ${km(bal)} por cobrar · ${ov} con facturas vencidas. Toca un cliente para ver su ficha completa.`,
+   Object.keys(SEG).map(k=>`<button class="chip" style="border:1px solid rgba(255,255,255,.18);cursor:pointer;${CF.seg===k?"background:rgba(255,255,255,.3)":""}" data-act="cseg" data-v="${k}">${SEG[k][0]} <b>${cnt(k)}</b></button>`).join(""),"center 30%")+
+  `<div class="filters card" style="margin-bottom:14px;border-bottom:1px solid var(--line)"><input class="inp search" id="cq" type="search" placeholder="Buscar cliente" value="${esc(CF.q)}" aria-label="Buscar cliente">
+   <div class="seg">${[["v","Más compras"],["bal","Mayor saldo"],["last","Más recientes"]].map(([k,l])=>`<button type="button" data-act="csort" data-v="${k}" aria-pressed="${CF.sort===k}">${l}</button>`).join("")}</div>
+   ${CF.seg?`<button class="btn sm" data-act="cseg" data-v="">Quitar filtro: ${SEG[CF.seg][0]}</button>`:""}</div>
+  <div class="cgrid">${L.map(c=>{const s=st[c.id];return `<button type="button" class="card ccard" data-act="client" data-id="${c.id}">
+    <div class="top">${avatar(c,40)}<div style="min-width:0"><b>${esc(c.name)}</b><span class="faint" style="font-size:12px">${c.type} · ${c.zone}</span></div></div>
+    ${spark(s.m,c.type==="hogar"?"var(--sage)":"var(--wine)")}
+    <div class="row"><span>Compras totales</span><b>${km(s.v)}</b></div><div class="row"><span>Pedidos</span><b>${int(s.n)}</b></div>
+    <div class="row"><span>Saldo</span><b style="${s.over?"color:var(--bad)":""}">${km(s.bal)}</b></div>
+    <div class="row" style="align-items:center"><span class="pill ${SEG[s.seg][1]}">${SEG[s.seg][0]}</span><span>Última: ${s.last?dmed(s.last):"—"}</span></div></button>`}).join("")||`<p class="empty">Sin clientes con ese filtro.</p>`}</div>`;
+};
+AFTER.clientes=()=>{let tm;$("#cq").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{CF.q=e.target.value;render();const i=$("#cq");i.focus();i.setSelectionRange(i.value.length,i.value.length)},200)})};
+
+/* ---------- PEDIDOS EN CURSO (kanban) ---------- */
+const ST=[["confirmado","Confirmado","p-info"],["alistamiento","Alistamiento","p-warn"],["enruta","En ruta","p-gold"],["entregado","Entregado","p-ok"]];
+const STX=Object.fromEntries(ST.map(s=>[s[0],s]));
+V.pedidos=()=>head("Arrastra las tarjetas entre columnas","Pedidos en curso",`<button class="btn pri" data-act="newOrder">Nuevo pedido</button>`)+
+ `<div class="kanban">${ST.map(([k,l,c])=>{const os=S.active.filter(o=>o.status===k);const v=os.reduce((a,o)=>a+totalOf(o),0);
+   return `<div class="col" data-st="${k}"><h4><span>${l} · ${os.length}</span><span class="num">${km(v)}</span></h4>${os.map(o=>{const cl=CX[o.cid];return `<div class="oc" draggable="true" data-id="${o.id}">
+    <div class="t"><div class="cl">${avatar(cl,28)}<b style="font-size:13px">${esc(cl.name)}</b></div><span class="num" style="font-size:13px">${km(totalOf(o))}</span></div>
+    <div class="thumbs">${o.items.map(i=>thumb(PX[i.pid],"th",52,52)).join("")}</div>
+    <div class="meta">${o.id} · Ruta ${ROUTES[o.route].n} · ${dshort(o.deliver)}</div>
+    <div class="acts">${k!=="entregado"?`<button class="btn sm pri" data-act="adv" data-id="${o.id}">${{confirmado:"Alistar",alistamiento:"Despachar",enruta:"Entregado"}[k]} →</button>`:`<button class="btn sm" data-act="archive" data-id="${o.id}">Archivar al histórico</button>`}<button class="btn sm" data-act="aorder" data-id="${o.id}">Ver</button></div></div>`}).join("")||`<p class="faint" style="font-size:12px;text-align:center;padding:20px 0">Suelta aquí un pedido</p>`}</div>`}).join("")}</div>`;
+AFTER.pedidos=()=>{
+  let drag=null;
+  $$(".oc").forEach(c=>{c.addEventListener("dragstart",e=>{drag=c.dataset.id;c.classList.add("drag");e.dataTransfer.effectAllowed="move";try{e.dataTransfer.setData("text/plain",drag)}catch(_){}});c.addEventListener("dragend",()=>c.classList.remove("drag"))});
+  $$(".col").forEach(col=>{col.addEventListener("dragover",e=>{e.preventDefault();col.classList.add("over")});col.addEventListener("dragleave",()=>col.classList.remove("over"));
+    col.addEventListener("drop",e=>{e.preventDefault();col.classList.remove("over");if(drag)moveOrder(drag,col.dataset.st)})});
+};
+function moveOrder(id,st){
+  const o=S.active.find(x=>x.id===id);if(!o||o.status===st)return;
+  const out=s=>s==="enruta"||s==="entregado";
+  if(!out(o.status)&&out(st)){const sf=o.items.filter(i=>S.stock[i.pid]<i.q);if(sf.length){toast("No hay inventario físico de "+sf.map(i=>PX[i.pid].name).join(", ")+".");return}o.items.forEach(i=>S.stock[i.pid]=Math.round((S.stock[i.pid]-i.q)*10)/10)}
+  if(out(o.status)&&!out(st))o.items.forEach(i=>S.stock[i.pid]=Math.round((S.stock[i.pid]+i.q)*10)/10);
+  if(st!=="confirmado"&&!o.inv)o.inv="FE-5"+String(S.on++).padStart(4,"0");
+  o.status=st;save();render();toast(`${o.id} → ${STX[st][1]}`);
+}
+
+/* ---------- COTIZACIONES ---------- */
+const QST={nueva:["Nueva","p-info"],enviada:["Enviada","p-warn"],aceptada:["Aceptada","p-ok"],vencida:["Vencida","p-mute"],convertida:["Convertida","p-plum"]};
+let qF="";
+V.cotizaciones=()=>{
+  const y=T0-365*DAY,conv=ALL().filter(o=>o.t>=y&&(o.src==="web"||o.src==="whatsapp")).length;
+  const F=[["Recibidas",Math.round(conv/.48),"var(--sky)"],["Enviadas",Math.round(conv/.55),"var(--gold)"],["Aceptadas",Math.round(conv*1.05),"var(--sage)"],["Convertidas en pedido",conv,"var(--wine)"]];
+  const L=S.quotes.filter(q=>!qF||q.status===qF).sort((a,b)=>b.date-a.date);
+  return head("Web, WhatsApp y asesores","Cotizaciones",`<button class="btn pri" data-act="newQuote">Nueva cotización</button>`)+
+  `<div class="grid2" style="margin-bottom:16px"><section class="card"><header><h3>Embudo de los últimos 12 meses</h3></header><div class="pb funnel">
+    ${F.map(([l,v,c],i)=>`<div class="fstep"><span style="font-weight:700;font-size:13px">${l}</span><div class="fbar" style="width:${Math.max(18,v/F[0][1]*100)}%;background:${c};animation-delay:${i*90}ms">${int(v)}</div><span class="num faint">${i?(v/F[i-1][1]*100).toFixed(0)+"%":""}</span></div>`).join("")}
+    <p class="faint" style="font-size:12px">Conversión total: <b class="num" style="color:var(--ink)">${(conv/F[0][1]*100).toFixed(0)}%</b> de cotizaciones terminan en pedido.</p></div></section>
+   <section class="card"><header><h3>Por responder</h3></header><div class="pb" style="display:grid;gap:10px">${S.quotes.filter(q=>q.status==="nueva").map(q=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><b>${esc(whoOf(q))}</b><div class="faint" style="font-size:12px">${q.id} · ${q.src} · ${km(totalOf(q))}</div></div><button class="btn sm pri" data-act="qconv" data-id="${q.id}">Convertir</button></div>`).join("")||`<p class="faint">Todo respondido.</p>`}</div></section></div>
+  <section class="card"><div class="filters"><div class="seg">${["",...Object.keys(QST)].map(k=>`<button type="button" data-act="qf" data-v="${k}" aria-pressed="${qF===k}">${k?QST[k][0]:"Todas"} ${k?S.quotes.filter(q=>q.status===k).length:S.quotes.length}</button>`).join("")}</div></div>
+   <div class="tbl"><table><thead><tr><th>N.º</th><th>Cliente</th><th>Cortes</th><th>Origen</th><th>Fecha</th><th>Estado</th><th class="r">Total</th><th></th></tr></thead><tbody>
+   ${L.map(q=>{const sf=shortfall(q.items);const cl=q.cid?CX[q.cid]:null;return `<tr><td class="num">${q.id}</td><td><div class="cl">${cl?avatar(cl,30):`<div class="av" style="background:var(--ink-3);width:30px;height:30px">${esc(initials(q.lead.name))}</div>`}<div><b>${esc(whoOf(q))}</b><small>${cl?"Cliente registrado":"Prospecto · "+esc(q.lead.phone)}</small></div></div></td>
+    <td><div class="thumbs">${q.items.map(i=>thumb(PX[i.pid],"th",52,52)).join("")}</div>${sf.length&&q.status!=="convertida"?`<small style="color:var(--bad);font-size:11.5px">Falta stock: ${esc(sf.join(", "))}</small>`:""}</td>
+    <td><span class="tag">${q.src}</span></td><td>${dshort(q.date)}</td><td><span class="pill ${QST[q.status][1]}">${QST[q.status][0]}</span></td><td class="r num">${money(totalOf(q))}</td>
+    <td class="r" style="white-space:nowrap">${q.status==="nueva"?`<button class="btn sm" data-act="qsend" data-id="${q.id}">Marcar enviada</button> `:""}${["nueva","enviada","aceptada"].includes(q.status)?`<button class="btn sm pri" data-act="qconv" data-id="${q.id}">Convertir</button>`:""}</td></tr>`}).join("")||`<tr><td colspan="8" class="empty">Sin cotizaciones en este estado.</td></tr>`}
+   </tbody></table></div></section>`;
+};
+
+/* ---------- RECURRENTES ---------- */
+V.recurrentes=()=>{
+  const due=S.recurring.filter(r=>r.active&&r.next<=T0+7*DAY);
+  const wk=S.recurring.filter(r=>r.active).reduce((a,r)=>a+sub(r.items)*(1-CX[r.cid].disc/100),0);
+  return head("Pedidos fijos de restaurantes y tiendas","Pedidos recurrentes",`<button class="btn" data-act="genRec" ${due.length?"":"disabled"}>Generar pedidos de la semana (${due.length})</button><button class="btn pri" data-act="newRec">Nuevo recurrente</button>`)+
+  `<div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))"><div class="card kpi"><span class="l">Venta semanal asegurada</span><span class="v">${km(wk)}</span><span class="d faint">${km(wk*52/12)} al mes aprox.</span></div>
+   <div class="card kpi"><span class="l">Recurrentes activos</span><span class="v">${S.recurring.filter(r=>r.active).length} de ${S.recurring.length}</span></div>
+   <div class="card kpi"><span class="l">Kilos por semana</span><span class="v">${kg(S.recurring.filter(r=>r.active).reduce((a,r)=>a+r.items.filter(i=>PX[i.pid].unit==="kg").reduce((b,i)=>b+i.q,0),0))} kg</span></div></div>
+  <section class="card"><header><h3>Semana tipo</h3><span class="faint" style="font-size:12px">Toca un pedido para pausarlo o activarlo</span></header><div class="pb"><div class="week">
+   ${[1,2,3,4,5,6].map(d=>{const rs=S.recurring.filter(r=>r.dow===d);return `<div class="day"><h4><span>${DN[d]}</span><span class="num">${km(rs.filter(r=>r.active).reduce((a,r)=>a+sub(r.items)*(1-CX[r.cid].disc/100),0))}</span></h4>
+    ${rs.map(r=>{const c=CX[r.cid],sf=shortfall(r.items);return `<div class="rchip ${r.active?"":"off"}" style="border-left-color:${c.col}" data-act="togRec" data-id="${r.id}" role="button" tabindex="0"><b>${esc(c.name)}</b>
+     <span class="faint">${r.items.map(i=>PX[i.pid].name).join(", ")}</span><div style="display:flex;justify-content:space-between;margin-top:4px"><span class="num">${km(sub(r.items)*(1-c.disc/100))}</span>${!r.active?'<span class="pill p-mute">Pausado</span>':sf.length?'<span class="pill p-bad">Faltante</span>':'<span class="pill p-ok">Cubierto</span>'}</div></div>`}).join("")||'<p class="faint" style="font-size:12px">Sin pedidos fijos</p>'}</div>`}).join("")}
+  </div></div></section>`;
+};
+
+/* ---------- RUTAS ---------- */
+let rDay=null;
+V.rutas=()=>{
+  const days=[...Array(7)].map((_,i)=>T0+i*DAY);
+  if(rDay===null)rDay=days.find(d=>S.active.some(o=>o.deliver===d))||days[1];
+  const dow=new Date(rDay).getDay();
+  const day=S.active.filter(o=>o.deliver===rDay);
+  const rs=Object.entries(ROUTES).filter(([k,r])=>r.days.includes(dow)||day.some(o=>o.route===k));
+  const vol={};ALL().forEach(o=>{if(o.t>=T0-90*DAY){const z=CX[o.c].zone;vol[z]=(vol[z]||0)+1}});const vmax=Math.max(...Object.values(vol),1);
+  const today={};day.forEach(o=>{const z=CX[o.cid].zone;today[z]=(today[z]||0)+1});
+  const map=`<svg viewBox="0 0 520 420" role="img" aria-label="Mapa esquemático de rutas">
+    <path class="river" d="M222 6 C246 100 206 180 236 262 S 214 372 228 416"/><text x="250" y="140" style="fill:var(--sky);font-size:10px;font-weight:600">Río Medellín</text>
+    ${Object.entries(ZONES).map(([z,[rid,x,y]])=>{const on=rs.some(([k])=>k===rid);return `<path class="rl" d="M${BASE[0]} ${BASE[1]} Q ${(BASE[0]+x)/2+20} ${(BASE[1]+y)/2-30} ${x} ${y}" stroke="${ROUTES[rid].col}" opacity="${on?.85:.12}" style="${on?"":"animation:none"}"/>`}).join("")}
+    ${Object.entries(ZONES).map(([z,[rid,x,y]])=>{const r=6+14*(vol[z]||0)/vmax,on=rs.some(([k])=>k===rid);return `<g data-tip="<b>${z}</b>Ruta ${ROUTES[rid].n} · ${ROUTES[rid].days.map(d=>DN[d]).join(", ")}<br>${vol[z]||0} pedidos en 90 días${today[z]?`<br>${today[z]} entregas este día`:""}">
+      <circle class="zn" cx="${x}" cy="${y}" r="${r}" fill="${ROUTES[rid].col}" opacity="${on?.9:.3}"/>${today[z]?`<circle cx="${x}" cy="${y}" r="${r+6}" fill="none" stroke="${ROUTES[rid].col}" stroke-width="2"/>`:""}
+      <text x="${x}" y="${y-r-5}" text-anchor="middle">${z}</text></g>`}).join("")}
+    <g><rect x="${BASE[0]-34}" y="${BASE[1]-14}" width="68" height="28" rx="14" fill="var(--ink)"/><text x="${BASE[0]}" y="${BASE[1]+4}" text-anchor="middle" style="fill:var(--bg)">Bodega</text></g></svg>`;
+  return head("Despachos en cadena de frío","Rutas")+
+  `<div class="seg" style="margin-bottom:14px;flex-wrap:wrap">${days.map(d=>{const n=S.active.filter(o=>o.deliver===d).length;return `<button type="button" data-act="rd" data-v="${d}" aria-pressed="${d===rDay}">${dshort(d)}${n?` · ${n}`:""}</button>`}).join("")}</div>
+  <div class="grid2e"><section class="card"><header><h3>Mapa de zonas</h3><div class="legend">${Object.values(ROUTES).map(r=>`<span><i style="background:${r.col}"></i>${r.n}</span>`).join("")}</div></header><div class="pb"><div class="rmap">${map}</div>
+   <p class="faint" style="font-size:12px;margin-top:8px">El tamaño de cada punto es el volumen de pedidos de los últimos 90 días. Las rutas animadas son las que salen el día elegido.</p></div></section>
+   <div class="stack">${rs.length?rs.map(([k,r])=>{const st=day.filter(o=>o.route===k);const kgs=st.reduce((a,o)=>a+o.items.filter(i=>PX[i.pid].unit==="kg").reduce((b,i)=>b+i.q,0),0);
+    return `<section class="card"><header><div><h3 style="display:flex;align-items:center;gap:8px"><i style="width:10px;height:10px;border-radius:50%;background:${r.col};display:inline-block"></i>Ruta ${r.n}</h3><span class="faint" style="font-size:12px">${r.veh} · ${r.drv} · ${r.win}</span></div><span class="num">${kg(kgs)} kg</span></header>
+    <div class="pb">${st.length?st.map((o,i)=>{const c=CX[o.cid];return `<div class="stop"><span class="n" style="background:${o.status==="entregado"?"var(--sage)":r.col}">${o.status==="entregado"?"✓":i+1}</span><div><b>${esc(c.name)}</b><div class="faint" style="font-size:12px">${c.zone} · ${c.phone} · ${o.id}</div></div>
+     ${o.status==="enruta"?`<button class="btn sm pri" data-act="adv" data-id="${o.id}">Entregado</button>`:`<span class="pill ${STX[o.status][2]}">${STX[o.status][1]}</span>`}</div>`}).join(""):`<p class="faint">Sin paradas este día.</p>`}</div></section>`}).join(""):`<section class="card"><p class="empty">No salen rutas este día.</p></section>`}
+   <section class="card"><header><h3>Manual de ruta</h3></header><div class="pb">
+    <details class="man" open><summary>Antes de salir</summary><ol><li>Pre-enfriar el furgón a 0–4 °C mínimo 30 minutos.</li><li>Verificar empaque al vacío y etiqueta de lote en cada corte.</li><li>Registrar temperatura del cuarto frío y del furgón.</li><li>Cargar en orden inverso a las paradas.</li></ol></details>
+    <details class="man"><summary>En la ruta</summary><ol><li>Abrir el furgón máximo 2 minutos por parada.</li><li>Si la temperatura pasa de 7 °C, avisar al coordinador antes de entregar.</li><li>En restaurantes, entregar al responsable de recibo.</li></ol></details>
+    <details class="man"><summary>En la entrega</summary><ol><li>El cliente verifica peso y estado; se anota el peso real.</li><li>Firma o foto de recibido y marcar la parada en el sistema.</li><li>Diferencias de peso mayores a 3% se ajustan en la factura.</li></ol></details>
+    <details class="man"><summary>Devoluciones</summary><ol><li>Solo con empaque intacto y cadena de frío verificada.</li><li>Se registran con número de lote para calidad.</li></ol></details></div></section></div></div>`;
+};
+
+/* ---------- INVENTARIO ---------- */
+V.inventario=()=>{
+  const since=T0-56*DAY,rot={};HIST.forEach(o=>{if(o.t>=since)o.it.forEach(([pi,q])=>rot[pi]=(rot[pi]||0)+q)});
+  const cards=P.map((p,pi)=>{const a=avail(p.id),rv=reserved(p.id),perDay=(rot[pi]||0)/56,cov=perDay?a/perDay:99,pct=Math.max(0,Math.min(1,a/(p.min*3)));
+    const col=a<=0||cov<2?"var(--bad)":cov<5||a<p.min?"var(--warn)":"var(--sage)";const C=2*Math.PI*26;
+    return `<article class="card icard"><div class="ph">${p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy">`:`<canvas width="300" height="140" data-m="${p.m}" data-s="${hash(p.id)}"></canvas>`}<span class="tag ${p.line}">${p.line==="wagyu"?"F1 Wagyu":"Brahman"}</span>
+     <div class="ring" data-tip="<b>Disponible</b>${kg(a)} ${p.unit} de ${p.min*3} objetivo"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="26" fill="none" stroke="var(--sunk)" stroke-width="4"/><circle cx="28" cy="28" r="26" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="${(C*pct).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 28 28)"/></svg><b>${Math.round(pct*100)}%</b></div></div>
+     <div class="bd"><h3>${p.name}</h3><div class="kv"><div><span>Físico</span><b>${kg(S.stock[p.id])}</b></div><div><span>Reservado</span><b>${kg(rv)}</b></div><div><span>Disponible</span><b style="color:${col}">${kg(a)}</b></div></div>
+     <div style="display:flex;justify-content:space-between;align-items:center;font-size:12.5px"><span class="faint">Venta ${kg(perDay*7)} ${p.unit}/sem</span><span class="pill ${cov<2||a<=0?"p-bad":cov<5?"p-warn":"p-ok"}">${a<=0?"Agotado":cov>=99?"Sin rotación":"Cubre "+kg(cov)+" días"}</span></div>
+     <div class="acts"><button class="btn sm" data-act="adj" data-id="${p.id}">Ajustar</button><button class="btn sm" data-act="cut" data-id="${p.id}">Historial</button></div></div></article>`}).join("");
+  const lots=S.lots.map(l=>{const age=Math.round((T0-l.slaughter)/DAY),pr=Math.min(1,age/l.aging),ready=age>=l.aging;
+    return `<article class="card lot"><div style="display:flex;justify-content:space-between;gap:10px"><div><span class="num faint" style="font-size:12px">${l.id}</span><b style="display:block;font-size:15px">${esc(l.animal)}</b></div><span class="tag ${l.line}">${LINE[l.line]}</span></div>
+     <div style="display:flex;justify-content:space-between;font-size:12.5px"><span class="faint">Maduración</span><span class="pill ${ready?"p-ok":"p-warn"}">${ready?"Listo para corte":age+" de "+l.aging+" días"}</span></div><div class="age"><i style="width:${pr*100}%;${ready?"":"background:var(--gold)"}"></i></div>
+     <span class="faint" style="font-size:12px">Rendimiento de ${l.carcass} kg en canal</span>
+     <div class="yield">${[["Premium","var(--wine)"],["Estándar","var(--gold)"],["Molida","var(--sage)"],["Hueso, grasa y merma","var(--ink-3)"]].map(([n,c],i)=>`<i style="width:${l.y[i]}%;background:${c}" data-tip="<b>${n}</b>${l.y[i]}% · ${kg(l.carcass*l.y[i]/100)} kg"></i>`).join("")}</div>
+     <div class="legend" style="font-size:11px">${["Premium","Estándar","Molida","Merma"].map((n,i)=>`<span><i style="background:${["var(--wine)","var(--gold)","var(--sage)","var(--ink-3)"][i]}"></i>${n} ${l.y[i]}%</span>`).join("")}</div>
+     <div style="display:flex;justify-content:space-between;font-size:12px" class="faint"><span>Beneficio ${dmed(l.slaughter)}</span><span>Cuarto frío ${l.temp.toLocaleString("es-CO")} °C</span></div></article>`}).join("");
+  return banner("img/brahman.jpg","Inventario y lotes","Lo que hay en el cuarto frío, lo reservado por pedidos y cuántos días alcanza cada corte según la venta de las últimas 8 semanas.",
+   `<button class="chip" style="cursor:pointer" data-act="entry">+ Registrar entrada de lote</button>`,"70% center")+
+  `<div class="inv" style="margin-bottom:22px">${cards}</div><div class="vhead" style="margin-bottom:12px"><div><p class="eyebrow">Del potrero al cuarto frío</p><h1 style="font-size:30px">Lotes en maduración</h1></div></div><div class="lots">${lots}</div>`;
+};
+
+/* ---------- MÓDULOS ---------- */
+V.modulos=()=>head("Alcance para la propuesta","Módulos del sistema")+[
+ ["Incluido en este prototipo","p-ok",[["Panel con periodo libre","Ventas, kilos, ticket y canales en cualquier rango de los dos últimos años."],["Histórico de pedidos","Miles de pedidos con búsqueda, filtros, orden, paginación y ficha de cada pedido."],["Clientes y cartera","Segmentos VIP, activo, en riesgo e inactivo; saldo y vencimientos por plazo."],["Cortes y zonas","Mapa de calor sobre la infografía de la res y tendencia por corte."],["Pedidos en curso","Tablero arrastrable con descuento automático de inventario al despachar."],["Cotizaciones","Embudo de conversión y conversión a pedido con un clic."],["Recurrentes","Semana tipo de pedidos fijos y generación automática."],["Rutas","Mapa de zonas, paradas por día y manual de cadena de frío."],["Inventario y lotes","Días de cobertura por corte, maduración y rendimiento de canal."]]],
+ ["Siguiente fase","p-info",[["Facturación electrónica DIAN","Emisión automática al despachar con ajuste por peso real."],["Pagos en línea","Wompi o PSE en la tienda y links de pago por WhatsApp."],["WhatsApp Business API","Confirmaciones, aviso de despacho y envío de cotizaciones."],["App del conductor","Paradas en el celular, foto de recibido, peso real y temperatura."],["Portal del restaurante","Pedidos, facturas, saldo y repetir pedido de la semana."],["Importación del histórico","Carga de las ventas pasadas desde Excel o el software contable."]]],
+ ["A futuro","p-mute",[["Planeación de beneficio","Cuántos animales enviar a frigorífico según demanda y recurrentes."],["Pronóstico de demanda","Proyección por corte con la estacionalidad del histórico."],["Usuarios y permisos","Roles para gerencia, ventas, bodega y conductores."],["QR de trazabilidad","Etiqueta por lote con la ficha del animal."]]]
+].map(([t,c,ms])=>`<h2 style="margin:20px 0 10px"><span class="pill ${c}" style="font-size:12.5px">${t}</span></h2><div class="mods">${ms.map(([n,d])=>`<div class="card mod"><h3>${n}</h3><p>${d}</p></div>`).join("")}</div>`).join("");
+
+/* ---------- Panel lateral ---------- */
+let lastFocus=null;
+function openDrawer(html){lastFocus=document.activeElement;$("#drawer").innerHTML=html;paint($("#drawer"));$("#drawer").classList.add("open");$("#drawer").setAttribute("aria-hidden","false");$("#scrim").classList.add("open");setTimeout(()=>{const x=$("#drawer .x");if(x)x.focus()},50)}
+function closeDrawer(){$("#drawer").classList.remove("open");$("#drawer").setAttribute("aria-hidden","true");$("#scrim").classList.remove("open");if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+$("#scrim").addEventListener("click",closeDrawer);
+const dhead=(eb,t,extra="")=>`<header><div><p class="eyebrow">${eb}</p><h2 class="disp" style="font-size:30px;font-weight:900">${t}</h2>${extra}</div><button class="x" type="button" data-act="dclose" aria-label="Cerrar">×</button></header>`;
+function orderDrawer(id){
+  const o=ALL().find(x=>x.id===id);if(!o)return;const c=CX[o.c],paid=isPaid(o);
+  const steps=[["Pedido recibido",o.t-2*DAY,o.src],["Confirmado",o.t-2*DAY+3600e3*2,"Reserva de inventario"],["Alistado y facturado",o.t-DAY+3600e3*15,o.inv],["Despachado",o.t+3600e3*7,"Ruta "+ROUTES[c.route].n],["Entregado",o.t+3600e3*10,c.zone],["Pago",paid?o.t+c.term*DAY:null,paid?"Recibido":"Pendiente"]];
+  openDrawer(dhead(o.id,esc(c.name),`<div style="display:flex;gap:8px;margin-top:8px">${paid?'<span class="pill p-ok">Pagado</span>':'<span class="pill p-warn">Por cobrar</span>'}<span class="tag">${o.src}</span></div>`)+
+  `<div class="db"><div class="kv"><div><span>Total</span><b>${money(o.tot)}</b></div><div><span>Kilos</span><b>${kg(o.kg)}</b></div><div><span>Entrega</span><b>${dmed(o.t)}</b></div></div>
+   <div><p class="eyebrow" style="margin-bottom:8px">Cortes</p><div class="items">${o.it.map(([pi,q,pr])=>{const p=P[pi];return `<div class="it">${thumb(p)}<div><b>${p.name}</b><div class="faint" style="font-size:12px">${kg(q)} ${p.unit} × ${money(pr)}</div></div><span class="num">${money(q*pr*(1-c.disc/100))}</span></div>`}).join("")}</div></div>
+   <div><p class="eyebrow" style="margin-bottom:10px">Trazabilidad del pedido</p><ol class="tl">${steps.map(([l,t,d])=>`<li class="${t?"":"pend"}"><span></span><div><b>${l}</b><div class="faint" style="font-size:12px">${esc(d)}</div></div><small>${t?dmed(t):"—"}</small></li>`).join("")}</ol></div>
+   <div class="acts">${paid?"":`<button class="btn pri" data-act="pay" data-id="${o.id}">Registrar pago</button>`}<button class="btn" data-act="client" data-id="${c.id}">Ver ficha del cliente</button></div></div>`);
+}
+function clientDrawer(id){
+  const c=CX[id],st=clientStats()[id];const os=ALL().filter(o=>o.c===id).sort((a,b)=>b.t-a.t);
+  const mx=Math.max(...st.m,1),labels=[...Array(12)].map((_,i)=>MN[new Date(T0-365*DAY+(i+.5)*(365*DAY/12)).getMonth()]);
+  const bars=`<svg class="ch" viewBox="0 0 360 120">${st.m.map((v,i)=>`<rect x="${i*30+5}" y="${100-90*v/mx}" width="20" height="${90*v/mx}" rx="4" fill="${c.col}" opacity="${.45+.55*v/mx}" data-tip="<b>${labels[i]}</b>${km(v)}"/><text x="${i*30+15}" y="116" text-anchor="middle">${labels[i]}</text>`).join("")}</svg>`;
+  const fav=Object.entries(st.cut).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const open=os.filter(o=>!isPaid(o));
+  openDrawer(dhead(`${c.type} · ${c.zone} · cliente desde ${dmed(c.since)}`,esc(c.name),`<div style="display:flex;gap:8px;margin-top:8px"><span class="pill ${SEG[st.seg][1]}">${SEG[st.seg][0]}</span><span class="tag">Ruta ${ROUTES[c.route].n}</span><span class="tag">${c.disc}% desc.</span><span class="tag">${c.term?c.term+" días":"Contado"}</span></div>`)+
+  `<div class="db"><div class="kv"><div><span>Compras</span><b>${km(st.v)}</b></div><div><span>Pedidos</span><b>${int(st.n)}</b></div><div><span>Ticket</span><b>${km(st.v/Math.max(1,st.n))}</b></div></div>
+   <div><p class="eyebrow" style="margin-bottom:6px">Compras últimos 12 meses</p>${bars}</div>
+   <div><p class="eyebrow" style="margin-bottom:8px">Cortes favoritos</p><div class="items">${fav.map(([pi,q])=>`<div class="it">${thumb(P[pi])}<div><b>${P[pi].name}</b><div class="faint" style="font-size:12px">${LINE[P[pi].line]}</div></div><span class="num">${kg(q)} ${P[pi].unit}</span></div>`).join("")}</div></div>
+   <div><p class="eyebrow" style="margin-bottom:8px">Cartera · ${km(st.bal)}</p>${open.length?open.slice(0,6).map(o=>{const ov=T0-o.t>c.term*DAY+DAY;return `<div class="it" style="grid-template-columns:1fr auto auto"><span class="num">${o.id} · ${dmed(o.t)}</span><span class="pill ${ov?"p-bad":"p-warn"}">${ov?"Vencida":"Al día"}</span><button class="btn sm" data-act="pay" data-id="${o.id}" data-c="${c.id}">Pagar ${km(o.tot)}</button></div>`}).join(""):'<p class="faint">Sin saldos pendientes.</p>'}</div>
+   <div><p class="eyebrow" style="margin-bottom:8px">Últimos pedidos</p><div class="items">${os.slice(0,8).map(o=>`<div class="it" style="grid-template-columns:1fr auto;cursor:pointer" data-act="order" data-id="${o.id}"><span><b class="num" style="font-weight:500">${o.id}</b> <span class="faint">· ${dmed(o.t)} · ${o.it.length} cortes</span></span><span class="num">${money(o.tot)}</span></div>`).join("")}</div>
+   <button class="btn sm" style="margin-top:10px" data-act="histc" data-id="${c.id}">Ver los ${int(os.length)} pedidos en el histórico</button></div></div>`);
+}
+function cutDrawer(id){
+  const p=PX[id],pi=P.indexOf(p);const ms=MONTHS.slice(-24);
+  const v=ms.map(m=>(m.cut[pi]||{v:0}).v),q=ms.map(m=>(m.cut[pi]||{q:0}).q);const mx=Math.max(...v,1);
+  const bars=`<svg class="ch" viewBox="0 0 480 130">${v.map((x,i)=>`<rect x="${i*20+2}" y="${110-100*x/mx}" width="15" height="${100*x/mx}" rx="3" fill="${p.line==="wagyu"?"var(--wine)":"var(--gold)"}" data-tip="<b>${mlabel(ms[i])}</b>${km(x)} · ${kg(q[i])} ${p.unit}"/>${i%3===0?`<text x="${i*20+9}" y="126" text-anchor="middle">${mlabel(ms[i])}</text>`:""}`).join("")}</svg>`;
+  const by={};ALL().forEach(o=>o.it.forEach(([pp,qq])=>{if(pp===pi)by[o.c]=(by[o.c]||0)+qq}));const top=Object.entries(by).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  openDrawer(`<div style="position:relative;height:170px;flex:none;background:#2a1517">${p.img?`<img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:cover">`:`<canvas width="520" height="170" data-m="${p.m}" data-s="${hash(p.id)}" style="width:100%;height:100%"></canvas>`}<button class="x" type="button" data-act="dclose" aria-label="Cerrar" style="position:absolute;top:12px;right:12px"></button></div>`+
+   `<div class="db"><div><span class="tag ${p.line}">${LINE[p.line]}</span><h2 class="disp" style="font-size:34px;font-weight:900;margin-top:6px">${p.name}</h2><span class="faint">Zona: ${REG[p.region].n} · ${money(p.price)} por ${p.unit}</span></div>
+   <div class="kv"><div><span>2 años</span><b>${km(v.reduce((a,b)=>a+b,0))}</b></div><div><span>Cantidad</span><b>${kg(q.reduce((a,b)=>a+b,0))}</b></div><div><span>Disponible</span><b>${kg(avail(p.id))}</b></div></div>
+   <div><p class="eyebrow" style="margin-bottom:6px">Ventas mensuales · 24 meses</p>${bars}</div>
+   <div><p class="eyebrow" style="margin-bottom:8px">Quién más lo compra</p><div class="items">${top.map(([cid,qq])=>`<div class="it" style="cursor:pointer" data-act="client" data-id="${cid}">${avatar(CX[cid],40)}<b>${esc(CX[cid].name)}</b><span class="num">${kg(qq)} ${p.unit}</span></div>`).join("")}</div></div></div>`);
+  $("#drawer .x").textContent="×";
+}
+function activeDrawer(id){
+  const o=S.active.find(x=>x.id===id);const c=CX[o.cid];
+  openDrawer(dhead(o.id+" · en curso",esc(c.name),`<div style="margin-top:8px"><span class="pill ${STX[o.status][2]}">${STX[o.status][1]}</span></div>`)+
+   `<div class="db"><div class="kv"><div><span>Total</span><b>${money(totalOf(o))}</b></div><div><span>Entrega</span><b>${dshort(o.deliver)}</b></div><div><span>Ruta</span><b>${ROUTES[o.route].n}</b></div></div>
+   <div class="items">${o.items.map(i=>`<div class="it">${thumb(PX[i.pid])}<div><b>${PX[i.pid].name}</b><div class="faint" style="font-size:12px">${kg(i.q)} ${PX[i.pid].unit} · disponible ${kg(avail(i.pid))}</div></div><span class="num">${money(PX[i.pid].price*i.q*(1-c.disc/100))}</span></div>`).join("")}</div>
+   <ol class="tl">${ST.map(([k,l])=>{const idx=ST.findIndex(s=>s[0]===o.status),me=ST.findIndex(s=>s[0]===k);return `<li class="${me<=idx?"":"pend"}"><span></span><b>${l}</b><small>${me<=idx?"✓":""}</small></li>`}).join("")}</ol>
+   <div class="acts">${o.status!=="entregado"?`<button class="btn pri" data-act="adv" data-id="${o.id}">Avanzar estado</button>`:""}<button class="btn" data-act="client" data-id="${c.id}">Ficha del cliente</button></div></div>`);
+}
+
+/* ---------- Modales ---------- */
+function openBox(html,onOk){$("#box").innerHTML=html;$("#ov").classList.add("open");$("#scrim").classList.add("open");const ok=$("#box #mok");
+  if(ok)ok.onclick=()=>{const e=onOk();if(e){const er=$("#box .err");er.textContent=e;er.hidden=false}else closeBox()};const f=$("#box input,#box select");if(f)f.focus()}
+function closeBox(){$("#ov").classList.remove("open");if(!$("#drawer").classList.contains("open"))$("#scrim").classList.remove("open")}
+$("#ov").addEventListener("click",e=>{if(e.target.id==="ov")closeBox()});
+const formBox=(t,body,ok)=>`<div class="mhead"><h3>${t}</h3><button class="x" type="button" data-act="bclose" aria-label="Cerrar">×</button></div><div class="form" style="overflow:auto">${body}<p class="err" hidden></p></div><div class="mfoot"><button class="btn" type="button" data-act="bclose">Cancelar</button><button class="btn pri" type="button" id="mok">${ok}</button></div>`;
+const clientOpts=f=>CL.filter(f||(()=>true)).map(c=>`<option value="${c.id}">${esc(c.name)} (${c.type})</option>`).join("");
+const prodOpts=()=>P.map(p=>`<option value="${p.id}">${p.name} · disp. ${kg(avail(p.id))} ${p.unit}</option>`).join("");
+const itemRow=(n,pid="w-ribeye",q=2)=>`<div class="two irow" style="grid-template-columns:2fr 1fr auto;align-items:end"><label>Corte<select class="inp" id="ip${n}">${prodOpts().replace(`value="${pid}"`,`value="${pid}" selected`)}</select></label><label>Cantidad<input class="inp" id="iq${n}" type="number" min="0.5" step="0.5" value="${q}"></label><button class="btn sm" type="button" data-act="delrow">Quitar</button></div>`;
+const itemsBlock=(rows)=>`<p class="eyebrow">Cortes</p><div id="ib" style="display:grid;gap:8px">${rows}</div><button class="btn sm" type="button" data-act="addrow" style="justify-self:start">+ Agregar corte</button>`;
+function readItems(){const out=[];$$("#ib .irow").forEach(r=>{const pid=r.querySelector("select").value,q=parseFloat(r.querySelector("input").value);if(q>0){const e=out.find(x=>x.pid===pid);e?e.q+=q:out.push({pid,q})}});return out}
+function createOrder(cid,items,src="directo"){const c=CX[cid];const o={id:"PD-2"+String(Date.now()).slice(-4)+String(S.on++),cid,items,deliver:nextRouteDay(c.route,T0),route:c.route,status:"confirmado",paid:false,inv:null,src};S.active.push(o);return o}
+
+/* Paleta de búsqueda */
+let palSel=0,palItems=[];
+function openPal(){openBox(`<div class="pal" style="display:flex;flex-direction:column;min-height:0"><input id="palq" placeholder="Busca un pedido (PD-…), cliente, corte o sección" aria-label="Buscar"><div class="res" id="palres"></div></div>`);palRender("");$("#palq").addEventListener("input",e=>palRender(e.target.value));
+  $("#palq").addEventListener("keydown",e=>{if(e.key==="ArrowDown"){palSel=Math.min(palItems.length-1,palSel+1);palMark();e.preventDefault()}else if(e.key==="ArrowUp"){palSel=Math.max(0,palSel-1);palMark();e.preventDefault()}else if(e.key==="Enter"&&palItems[palSel]){palItems[palSel].go()}})}
+function palRender(q){
+  q=q.trim().toLowerCase();const g=[];
+  const views=Object.entries(LBL).filter(([k,l])=>!q||l.toLowerCase().includes(q)).slice(0,q?5:10).map(([k,l])=>({g:"Secciones",l,s:"",go:()=>{closeBox();location.hash=k}}));
+  const cls=q?CL.filter(c=>c.name.toLowerCase().includes(q)).slice(0,6).map(c=>({g:"Clientes",l:c.name,s:c.type+" · "+c.zone,av:c,go:()=>{closeBox();clientDrawer(c.id)}})):[];
+  const cuts=q?P.filter(p=>p.name.toLowerCase().includes(q)).slice(0,5).map(p=>({g:"Cortes",l:p.name,s:LINE[p.line],p,go:()=>{closeBox();cutDrawer(p.id)}})):[];
+  const ords=q.length>=3?ALL().filter(o=>o.id.toLowerCase().includes(q)).slice(0,6).map(o=>({g:"Pedidos",l:o.id+" · "+CX[o.c].name,s:dmed(o.t)+" · "+money(o.tot),go:()=>{closeBox();orderDrawer(o.id)}})):[];
+  palItems=[...views,...cls,...cuts,...ords];palSel=0;let last="";
+  $("#palres").innerHTML=palItems.map((it,i)=>{const h=it.g!==last?`<div class="grp">${it.g}</div>`:"";last=it.g;return h+`<div class="ri" data-i="${i}" aria-selected="${i===0}">${it.av?avatar(it.av,26):it.p?thumb(it.p,"th",52,52).replace('class="th"','class="th" style="width:26px;height:26px"'):""}<span>${esc(it.l)}</span><small>${esc(it.s)}</small></div>`}).join("")||`<p class="empty">Sin resultados para “${esc(q)}”.</p>`;
+  paint($("#palres"));$$("#palres .ri").forEach(el=>{el.addEventListener("click",()=>palItems[+el.dataset.i].go());el.addEventListener("pointerenter",()=>{palSel=+el.dataset.i;palMark()})});
+}
+function palMark(){$$("#palres .ri").forEach(el=>el.setAttribute("aria-selected",+el.dataset.i===palSel));const s=$(`#palres .ri[data-i="${palSel}"]`);if(s)s.scrollIntoView({block:"nearest"})}
+$("#openPal").addEventListener("click",openPal);
+addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openPal()}if(e.key==="Escape"){if($("#ov").classList.contains("open"))closeBox();else closeDrawer()}});
+
+/* ---------- Acciones ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;const a=b.dataset.act,id=b.dataset.id,v=b.dataset.v;
+  const A={
+   dclose:closeDrawer,bclose:closeBox,
+   rng:()=>{RANGE=[MONTHS.length-(+v),MONTHS.length-1];render()},
+   cm:()=>{cutMetric=v;render()},zclr:()=>{zoneSel=null;render()},zsel:()=>{zoneSel=zoneSel===id?null:id;render()},
+   cut:()=>cutDrawer(id),order:()=>orderDrawer(id),client:()=>clientDrawer(id),aorder:()=>activeDrawer(id),
+   hsort:()=>{if(HF.sort===v)HF.dir*=-1;else{HF.sort=v;HF.dir=v==="c"?1:-1}render()},
+   pg:()=>{HF.page=+v;render();$("#main").scrollIntoView()},
+   hreset:()=>{Object.assign(HF,{q:"",from:0,to:null,line:"",type:"",route:"",pay:"",page:0});render()},
+   histc:()=>{closeDrawer();Object.assign(HF,{q:CX[id].name,from:0,to:null,line:"",type:"",route:"",pay:"",page:0});location.hash="historico";render()},
+   csv:()=>{const L=histFiltered();const rows=[["pedido","fecha","cliente","canal","ruta","kilos","total","pagado"].join(";"),...L.map(o=>[o.id,new Date(o.t).toISOString().slice(0,10),CX[o.c].name,CX[o.c].type,ROUTES[CX[o.c].route].n,String(o.kg).replace(".",","),Math.round(o.tot),isPaid(o)?"si":"no"].join(";"))].join("\n");
+     try{navigator.clipboard.writeText(rows).then(()=>toast(`${int(L.length)} filas copiadas. Pégalas en Excel.`),()=>toast("El navegador no permitió copiar."))}catch(_){toast("El navegador no permitió copiar.")}},
+   cseg:()=>{CF.seg=CF.seg===v?"":v;render()},csort:()=>{CF.sort=v;render()},
+   pay:()=>{S.paid[id]=true;save();toast("Pago registrado");if(b.dataset.c)clientDrawer(b.dataset.c);else orderDrawer(id);render()},
+   adv:()=>{const o=S.active.find(x=>x.id===id);const nx={confirmado:"alistamiento",alistamiento:"enruta",enruta:"entregado"}[o.status];moveOrder(id,nx);if($("#drawer").classList.contains("open"))activeDrawer(id)},
+   archive:()=>{const i=S.active.findIndex(x=>x.id===id),o=S.active[i],c=CX[o.cid];
+     const it=o.items.map(x=>[P.findIndex(p=>p.id===x.pid),x.q,PX[x.pid].price]);
+     S.done.push({id:o.id,c:o.cid,t:Math.min(o.deliver,T0-1),it,tot:totalOf(o),kg:o.items.filter(x=>PX[x.pid].unit==="kg").reduce((a,x)=>a+x.q,0),paid:o.paid,src:o.src,inv:o.inv||"FE-—"});
+     S.active.splice(i,1);save();buildMonths();render();toast(`${o.id} archivado en el histórico`)},
+   qf:()=>{qF=v;render()},
+   qsend:()=>{S.quotes.find(q=>q.id===id).status="enviada";save();render();toast("Cotización marcada como enviada")},
+   qconv:()=>{const q=S.quotes.find(x=>x.id===id);let cid=q.cid;
+     if(!cid){const L=q.lead;const zone=L.zone in ZONES?L.zone:"El Poblado";const c={id:"C"+String(CL.length+1).padStart(3,"0"),name:L.name,type:L.type==="evento"?"hogar":L.type,zone,route:ZONES[zone][0],w:1,wg:.5,disc:L.type==="restaurante"?5:0,term:0,since:T0,until:null,phone:L.phone,col:AVC[CL.length%AVC.length]};CL.push(c);CX[c.id]=c;cid=c.id}
+     const sf=shortfall(q.items);const o=createOrder(cid,q.items.map(i=>({...i})),q.src);q.status="convertida";q.cid=cid;save();render();
+     toast(`${o.id} creado para ${dshort(o.deliver)}${sf.length?". Revisa stock de "+sf.join(", "):""}`)},
+   togRec:()=>{const r=S.recurring.find(x=>x.id===id);r.active=!r.active;save();render();toast(`${CX[r.cid].name}: ${r.active?"activo":"pausado"}`)},
+   genRec:()=>{const due=S.recurring.filter(r=>r.active&&r.next<=T0+7*DAY);const w=[];due.forEach(r=>{if(shortfall(r.items).length)w.push(CX[r.cid].name);const o=createOrder(r.cid,r.items.map(i=>({...i})),"recurrente");o.deliver=r.next;r.next+=7*DAY});
+     save();render();toast(`${due.length} pedidos generados${w.length?". Con faltantes: "+w.join(", "):""}`)},
+   rd:()=>{rDay=+v;render()},
+   addrow:()=>{const n=$$("#ib .irow").length+Date.now()%1000;$("#ib").insertAdjacentHTML("beforeend",itemRow(n,"b-punta",1))},
+   delrow:()=>b.closest(".irow").remove(),
+   newOrder:()=>openBox(formBox("Nuevo pedido",`<label>Cliente<select class="inp" id="mc">${clientOpts(c=>!c.until)}</select></label>${itemsBlock(itemRow(1))}`,"Crear pedido"),()=>{const it=readItems();if(!it.length)return"Agrega al menos un corte.";const o=createOrder($("#mc").value,it);save();render();toast(`${o.id} para ${dshort(o.deliver)}`)}),
+   newQuote:()=>openBox(formBox("Nueva cotización",`<label>Cliente<select class="inp" id="mc">${clientOpts()}</select></label>${itemsBlock(itemRow(1,"b-punta",3))}`,"Guardar"),()=>{const it=readItems();if(!it.length)return"Agrega al menos un corte.";S.quotes.push({id:"COT-"+(S.qn++),cid:$("#mc").value,items:it,date:T0,status:"nueva",src:"directo"});save();render();toast("Cotización creada")}),
+   newRec:()=>openBox(formBox("Nuevo pedido recurrente",`<div class="two"><label>Cliente<select class="inp" id="mc">${clientOpts(c=>c.type!=="hogar"&&!c.until)}</select></label><label>Día de entrega<select class="inp" id="md">${[1,2,3,4,5,6].map(d=>`<option value="${d}">${DN[d]}</option>`).join("")}</select></label></div>${itemsBlock(itemRow(1,"w-ribeye",4))}`,"Programar"),()=>{const it=readItems();if(!it.length)return"Agrega al menos un corte.";const d=+$("#md").value;S.recurring.push({id:"RC-"+String(S.recurring.length+1).padStart(2,"0"),cid:$("#mc").value,dow:d,items:it,active:true,next:nextDow(d)});save();render();toast("Recurrente programado")}),
+   adj:()=>{const p=PX[id];openBox(formBox("Ajustar "+p.name,`<label>Inventario físico contado (${p.unit})<input class="inp" id="mq" type="number" step="0.5" value="${S.stock[id]}"></label><label>Motivo<select class="inp" id="mr"><option>Conteo físico</option><option>Merma</option><option>Devolución</option><option>Degustación</option></select></label>`,"Guardar ajuste"),()=>{const x=parseFloat($("#mq").value);if(isNaN(x)||x<0)return"Escribe una cantidad válida.";const r=$("#mr").value;S.stock[id]=x;save();render();toast(`${p.name}: ${kg(x)} ${p.unit} · ${r}`)})},
+   entry:()=>openBox(formBox("Entrada de lote",`<div class="two"><label>Línea<select class="inp" id="ml"><option value="wagyu">F1 Wagyu × Brahman</option><option value="brahman">Brahman 100%</option></select></label><label>Animal<input class="inp" id="ma" value="Novillo #${4500+S.lots.length}"></label></div><div class="two"><label>Kg en canal<input class="inp" id="mk" type="number" value="300"></label><label>Días de maduración<input class="inp" id="mg" type="number" value="21"></label></div>${itemsBlock(itemRow(1,"w-ribeye",10)+itemRow(2,"w-strip",8))}`,"Registrar entrada"),()=>{
+     const it=readItems();if(!it.length)return"Agrega los cortes que entran.";it.forEach(i=>S.stock[i.pid]=Math.round((S.stock[i.pid]+i.q)*10)/10);
+     const line=$("#ml").value;S.lots.unshift({id:"L-"+new Date().toISOString().slice(2,4)+String(new Date().getMonth()+1).padStart(2,"0")+"-"+String(11+S.lots.length).padStart(2,"0"),line,animal:$("#ma").value,slaughter:T0,carcass:+$("#mk").value||300,aging:+$("#mg").value||21,temp:2,y:line==="wagyu"?[35,29,18,18]:[25,37,22,16]});save();render();toast("Lote registrado")})
+  };
+  if(A[a]){e.preventDefault();A[a]()}
+});
+document.addEventListener("keydown",e=>{const t=e.target.closest&&e.target.closest(".rchip");if(t&&(e.key==="Enter"||e.key===" ")){e.preventDefault();t.click()}});
+$("#resetData").addEventListener("click",()=>{S=seedState();save();buildMonths();RANGE=[MONTHS.length-12,MONTHS.length-1];rDay=null;render();toast("Datos de ejemplo restaurados")});
+
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2800)}
+window.__adm={S:()=>S,HIST,MONTHS:()=>MONTHS,CL};
+render();
+})();
+</script>
+
+</body>
+</html>
